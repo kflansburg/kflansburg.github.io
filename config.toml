@@ -1,0 +1,57 @@
+baseURL = "http://kflansburg.com/"
+languageCode = "en-us"
+title = "kflansburg.com"
+copyright = "Kevin Flansburg"
+theme = "smol"
+
+[taxonomies]
+  tag = "tags"
+
+# Parameters
+[params]
+    subtitle = "Discussions on Rust, Kubernetes, and more."
+    dateFmt = "02.01.2006"
+
+# Header
+[menu]
+  [[menu.main]]
+        name = "About"
+        url = "/about"
+        weight = 1 
+
+  [[menu.main]]
+        name = "Posts"
+        url = "/posts"
+        weight = 1 
+  [[menu.main]]
+        name = "Tags"
+        url = "/tags"
+        weight = 2
+
+
+
+  [[menu.footer]]
+        name = "GitHub"
+        url = "https://github.com/kflansburg"
+        weight = 1 
+
+  [[menu.footer]]
+        name = "Twitter"
+        url = "https://twitter.com/kevin_flansburg"
+        weight = 2
+   [[menu.footer]]
+        name = "LinkedIn"
+        url = "https://www.linkedin.com/in/kflansburg/"
+        weight = 3 
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = true
+    codeFences = true
+    guessSyntax = false
+    lineNoStart = 0
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = false
+    style = "vs"
+    tabWidth = 4
