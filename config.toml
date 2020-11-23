@@ -3,6 +3,7 @@ languageCode = "en-us"
 title = "kflansburg.com"
 copyright = "Kevin Flansburg"
 theme = "smol"
+publishDir = "docs"
 
 [taxonomies]
   tag = "tags"

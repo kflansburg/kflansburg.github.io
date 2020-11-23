@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Krustlet on kflansburg.com</title>
+    <link>http://kflansburg.com/tags/krustlet/</link>
+    <description>Recent content in Krustlet on kflansburg.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Kevin Flansburg</copyright>
+    <lastBuildDate>Wed, 23 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://kflansburg.com/tags/krustlet/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A Fistful of States: More State Machine Patterns in Rust</title>
+      <link>http://kflansburg.com/posts/a-fistful-of-states/</link>
+      <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://kflansburg.com/posts/a-fistful-of-states/</guid>
+      <description>My recent guest post on Deis Labs&#39; Blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
+    </item>
+    
+  </channel>
+</rss>
