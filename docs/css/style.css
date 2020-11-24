@@ -54,11 +54,6 @@ p > code{
     }
 }
 
-.highlight {
-    margin-left: -140px;
-    margin-right: -140px;
-}
-
 pre {
 /*
     color: #FFFFFF;
@@ -71,8 +66,6 @@ pre {
 article {
     padding: 24px 0;
     font-family: 'Averia Serif Libre';
-    margin-left: 140px;
-    margin-right: 140px;
 }
 
 article > h1 {
@@ -104,6 +97,21 @@ figcaption {
 
 figure {
     margin: auto;
-    margin-left: -140px;
-    margin-right: -140px;
+}
+
+@media (min-width: 992px) {
+    figure {
+        margin-left: -17%;
+        margin-right: -17%;
+    }
+
+    .highlight {
+        margin-left: -17%;
+        margin-right: -17%;
+    }
+    
+    article {
+        margin-left: 17%;
+        margin-right: 17%;
+    }
 }

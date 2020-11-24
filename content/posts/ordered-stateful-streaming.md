@@ -42,7 +42,7 @@ transformation to each partition independently. While each partition must
 be processed sequentially, the entire job can be parallelized up to the total
 number of partitions.    
 
-![Architecture Overview](/streaming-arch.svg)
+[![Architecture Overview](/streaming-arch.svg)](/streaming-arch.svg)
 
 While this is not *the* most common task in streaming analytics, I believe it
 is still a fairly important use case. In particular, this specifically follows
