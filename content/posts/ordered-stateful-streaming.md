@@ -303,14 +303,16 @@ val query = df
 ```
 
 Notice, however, that there is one catch. The only option for this type of 
-transformation is when using Spark's `flatMapGroupsWithState` method on a
-dataset that has been grouped by a key. This is frustrating for a few reasons. 
-First, what if I don't want to group this operation? There appears to be no 
-option to skip this step. Second, `groupByKey` is explicitly called out as 
-something to avoid in nearly every place it is mentioned online. 
-This is because it performs a full shuffle of the data. In my case, the 
-grouping was being done by Kafka key, so it seemed like it would *already be 
-grouped* as it streams from the consumer. 
+transformation is when using Spark's 
+[flatMapGroupsWithState](https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/streaming/GroupState.html) 
+method on a dataset that has been grouped by a key. This is frustrating for a 
+few reasons. First, what if I don't want to group this operation? There appears 
+to be no option to skip this step. Second, `groupByKey` is 
+[explicitly called out as something to avoid](https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html)
+in nearly every place it is mentioned online. This is because it performs a 
+full shuffle of the data. In my case, the grouping was being done by Kafka key, 
+so it seemed like it would *already be grouped* as it streams from the 
+consumer. 
 
 Structured streaming appears to assume by default that you are trying to 
 perform a join operation on topics, and that any grouping being done is 
@@ -322,7 +324,7 @@ unavoidable when subscribing to multiple topics, and in particular using topic
 discovery. This seemed like an inconvenience, but I accepted it given the other 
 features that Spark had.  
 
-**Latency**
+#### Latency
 
 One of the main limitations of Structured Streaming that is often 
 discussed is that it operates on "microbatches". In other words, it is 
@@ -331,16 +333,18 @@ data in batches as (mostly) normal Spark queries. This suited me just fine,
 as I could play with the batch interval to achieve the tradeoff between 
 Parquet file size and latency that I was concerned with. If latency is a 
 critical focus of your application, I still believe that Structured Streaming
-is a solid solution with its `Continuous` trigger mode. I would also argue 
-that periodically (every ~100ms) processing new messages in batches is *more*
-efficient than processing each message individually as it arrives, because
-there is some overhead in managing application state each time progress is 
-made.
+is a solid solution with its 
+[Continuous](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#continuous-processing) 
+trigger mode. I would also argue that periodically (every ~100ms) processing 
+new messages in batches is *more* efficient than processing each message 
+individually as it arrives, because there is some overhead in managing 
+application state each time progress is made.
 
-**Final Design**
+#### Final Design
 
 In the end, I wrote the following query in Scala. I packaged this query as a 
-fat JAR using `sbt assmebly`, and deployed it on AWS EMR. 
+fat JAR using [sbt assmebly](https://github.com/sbt/sbt-assembly), and 
+[deployed it on AWS EMR](https://aws.amazon.com/blogs/big-data/submitting-user-applications-with-spark-submit/). 
 
 ```scala
 // Contruct a streaming dataset. 
