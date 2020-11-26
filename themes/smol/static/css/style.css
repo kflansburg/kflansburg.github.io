@@ -1,0 +1,118 @@
+@import "_syntax-light.css";
+@import "_syntax-dark.css" (prefers-color-scheme: dark);
+
+a:link {
+    color: #00e;
+}
+
+a:visited{
+    color: #00e;
+}
+
+html {
+    overflow-y: scroll
+}
+
+body {
+    font-family: 'monospace'; 
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 10px;
+    font: 14px/1.5 monospace;
+    color: #444
+}
+
+h1,h2,h3 {
+    line-height: 1.2
+}
+
+p > code{
+    font: 14px/1.5 monospace;
+    color: #444;
+    background: #eee;
+    padding: 2px;
+    display: inline-block;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    body {
+        color: white;
+        background: #000
+    }
+
+    a:link {
+        color: #5bf
+    }
+
+    a:visited{
+        color: #5bf
+    }
+    p > code{
+        color: #8a8a8a;
+        background: #1c1c1c;
+    }
+}
+
+pre {
+/*
+    color: #FFFFFF;
+    background:#000000;
+    padding: 24px;
+    overflow-x: auto
+*/
+}
+
+article {
+    padding: 24px 0;
+    font-family: 'Averia Serif Libre';
+}
+
+article > h1 {
+    font-size: 2em;
+}
+
+article p {
+    text-align: justify;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+figcaption {
+    color: #888;
+    font: 12px/1.5 monospace;
+    text-align: center;
+}
+
+figure {
+    margin: auto;
+}
+
+@media (min-width: 992px) {
+    figure {
+        margin-left: -17%;
+        margin-right: -17%;
+    }
+
+    .highlight {
+        margin-left: -17%;
+        margin-right: -17%;
+    }
+    
+    article {
+        margin-left: 17%;
+        margin-right: 17%;
+    }
+}
