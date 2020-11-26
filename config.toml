@@ -16,11 +16,6 @@ publishDir = "docs"
 # Header
 [menu]
   [[menu.main]]
-        name = "About"
-        url = "/about"
-        weight = 1 
-
-  [[menu.main]]
         name = "Posts"
         url = "/posts"
         weight = 1 

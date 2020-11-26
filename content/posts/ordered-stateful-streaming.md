@@ -390,91 +390,208 @@ query.awaitTermination();
 
 ## Practical Difficulties
 
-While I just made the development and deployment process sound straightforward,
-there were a number of time-consuming practical issues that I encountered while
-developing for streaming and Spark in general. Many of these may be common 
-issues which betray a novice understanding of the Java ecosystem, but hopefully
-this can help other novices, and from what I've seen, I have little interest in 
-spending my time to learn more about Java. 
+Many readers will know that developing and deploying Spark applications is 
+often not so simple. I believe the learning curve for this is quite high, and I 
+would like to share some issues related to Spark, Scala, and streaming 
+applications in particular which I encountered that proved quite time consuming
+to debug.
 
-**Versioning and JAR Packaging**
+### Versioning and JAR Packaging
 
 I personally find dependency management in Spark and Java to be quite 
-aggrivating. It is not clear to me how more sophisticated Java package managers
-are intended to fit into the Spark development lifecycle. It is quite common to 
-need a newer version of Hadoop than your vendored cluster provides. On top of 
-this, each vendor has likely deployed a custom fork of certain packages, 
-altering their behavior from public documentation. Furthermore, I have found it 
-incredibly difficult to even track down which features are supported by which 
-version of a package, due to dead legacy documentation links (for actively used 
-versions!). 
+aggravating. This is caused by a number of factors:
 
-For this project, I required `hadoop-aws` 2.8, and `spark-sql-kafka-0-10`, 
-which enables reading from Kafka and is not bundled by default. It seemed like
-the best practice for this (to avoid customizing the cluster you are deploying
-into) was to package a "fat" JAR, which includes these depedency in your 
-application JAR. In Scala-land, the most common tool for this appears to be the
-`assembly` plugin for `sbt`.
+ * Hadoop and Spark have introduced a lot of features in recent releases, and
+   documentation does not indicate what version they were introduced in. 
+ * Many users are operating on vendored clusters which provide fairly old 
+   versions of these packages. In addition, many vendors provide *forked*
+   versions of these packages which do not match the official documentation. 
+ * Issues with dependencies (especially for users submitting from Python) often
+   just result in `ClassNotFoundException` or `NoSuchMethodError` at runtime,
+   making the debug loop time consuming and opaque. 
 
-I quickly found that packaging files together into a single JAR is problematic
-due to conflicting filenames. `assembly` provides a `case` based approach to
-resolving these conflicts, but there were so many and it wasn't clear what the
-appropriate action was for each one. What I recently realized is that it is 
-*extremely critical to mark dependencies which you do not want to include* in 
-your `build.sbt` file. Otherwise, you will be including all of Spark and Hadoop 
-itself in the JAR, causing many more conflicts. This does not eliminate 
-conflicts, but does make them manageable. Note the `provided` to indicate 
-not to include a package:
+The simplest path for specifying custom dependencies, using `--packages` with
+`spark-submit`, has many advantages:
+
+ * It deals with distributing packages to all nodes.
+ * It solves for additional dependencies of these packages.
+ * It avoids cluster-wide version conflicts which may impact other users. 
+
+Unfortunately, this does not integrate very well with a modern development
+process where a sophisticated package manager handles this for you. I have also
+encountered misconfigured clusters where my application still picks up the 
+default version of the package in the cluster, rather than the one I specified.  
+
+I'd like to share a checklist of common gotchas that I typically go through 
+when something isn't working.  
+
+#### Clearly Identify Cluster Package Versions
+
+Now that Spark 3 is stable, many vendors are shipping Spark `3.0`, however 
+Hadoop `2.7` is still the default. If your cluster predates June 2020, you 
+will likely find Spark `2.4` or even earlier. Specifying custom Spark versions 
+using `spark-submit` is unlikely to work reliably (I have not tested this), 
+however you can generally specify newer Hadoop versions. From here, I would 
+recommend that you *bookmark* the documentation for your versions in 
+particular, and be extremely vigilant that any examples you draw from online
+are not using newer APIs. I would generally recommend that you always use the 
+latest Hadoop when possible. This tends to be the biggest source of "missing"
+new features for me, and there are massive performance improvements in 
+Hadoop `3.x`. 
+
+#### Audit Specified Dependencies
+
+Double check the dependencies that you are specifying for `spark-submit`. One
+common error with Scala is specifying the wrong Scala version of these 
+packages. You should also check that you are using a Scala version matching
+the cluster. While it can be customized, Spark `2.4.2+` will be Scala `2.12`, 
+and anything before that will be Scala `2.11`. It is possible that dependencies
+have conflicting sub-dependency versions. I typically spend a lot of time on 
+[Maven Repository](https://mvnrepository.com/) during this stage. For streaming
+pipelines that interact with Kafka, you will need `spark-sql-kafka-0-10`, which
+is not bundled by default.
+
+#### Packaging "Fat" JARs
+
+One option for automating this process is to let your local package manager
+and compiler do this dependency resolution and validation of existing APIs for 
+you. To ensure that these validated dependencies are available on the cluster,
+you can package them along with your application in what is called a "Fat" JAR.
+In Scala, the `assembly` plugin for `sbt` appears to be the most popular way
+of doing this.
+
+This process is not straightforward at times. Packaging these files together
+requires a process for resolving conflicting filenames. `assembly` provides
+a `case` based approach to resolve these conflicts, along with a default 
+implementation. Unfortunately, you almost always have to manually resolve some
+files. Many of these files are not used at runtime and can be discarded, 
+however some require some deeper investigation. 
+
+When I first attempted this, I was greeted with *thousands* of conflicting 
+files, and spent quite a bit of time trying to resolve them. This was due to
+a misconfiguration of `build.sbt`. It is **extremely critical** that you mark
+dependencies which the cluster will provide (Spark for example) as `provided`
+in this file, or else `sbt` will try to package *everything* into your JAR and
+you will encounter a lot of conflicts. With this change, I still had a handful
+of conflicts, but it was a much less daunting process.  Note the `provided` to 
+indicate not to include a package:
 
 ```scala
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.0.1" % "provided"
 ```
 
-**JVM Memory Issues**
+### Runtime Memory Issues
 
-Another frustrating aspect is how memory is managed in this ecosystem. It 
-completely boggles the mind that in `$CURRENT_YEAR`, I can have plenty of free
-memory on the system, and my program will fail due to misconfiguration of 
-esoteric JVM memory settings. I frankly don't care about the reasons for this,
-it should be fixed in such a mature ecosystem.
+Due to the JVM, Spark has well-deserved reputation for poor memory management. 
+The key here is that users have to take on the role of the operating system
+and carefully specify configuration parameters so that they can fully utilize
+the hardware that they are running on. This process is extremely time 
+consuming, and even the most sophisticated vendors get this wrong. 
 
-On top of this, stateful streaming in particular appears to struggle with 
-memory issues. Despite having specified every setting I could find in the JVM
-and Spark (only God knows if these were respected), making sure to give the 
-application exactly as much memory as was present on the node (less the hefty
-JVM tax), I still encountered out of memory crashes. My best guess is that 
-state in particular is unable to be spilled to disk (although it should not
-be that large in memory). Eventually I conceded and doubled the size of the
-EC2 instances, but it was annoying to have to pay for so much memory, and 
-always felt like a ticking timebomb.  
+In addition to this, stateful streaming in particular appears to struggle with 
+memory issues. There are a number of contributing factors here:
 
-**Recovery**
+ * While Spark is quite memory efficient with loading Kafka data, the entire 
+   state of a stateful transformation must be kept in memory during a batch. 
+   Spark appears to keep states for all groups in memory simultaneously.
+ * By default, Kafka streaming queries will attempt to consume all new offsets
+   in a single batch. If your application is starting up after some downtime,
+   this could mean millions of records. You should specify 
+   `maxOffsetsPerTrigger` to limit this behavior, but be careful that your
+   application can still keep up (or catch up) with a topic. 
+ * As mentioned earlier, stateful transformations require the `groupByKey` 
+   operation which causes a full shuffle. Combined with the previous issue, 
+   this can exceed available memory. 
 
-With the numerous out-of-memory crashes, I had plenty of opportunities to 
+### Recovery from Failure
+Due to numerous out-of-memory crashes, I have had plenty of opportunities to 
 stress test the recovery feature. In general, it seems to work as advertised
 but it feels like a weak point given the consequences of failure (multi-hour 
 gaps in data).
 
-The first practical consideration is Kafka topic retention. The real tradeoff
-here is between disk space cost and the SLA of responding to application 
-failures. When the processing pipeline goes down, your now on the clock to 
-fix it before you start losing unprocessed records. Given the volume of data, I 
-found that setting retention between 1 and 3 days was acceptable. An important
-factor here becomes reliably notifying a human when the job fails. 
+The first practical consideration is Kafka topic retention. The real trade off
+here is between disk space cost and the time to respond to application 
+failures. When the processing pipeline goes down, your are now on the clock to 
+fix it before you start losing unprocessed records. I would recommend an
+*absolute minimum* of 72 hours retention to accommodate weekends. If 
+engineering determines that a job cannot be resumed right away, it may make 
+sense to temporarily adjust the retention of affected topics. Keep in mind 
+that if you are sizing your block volumes based on this retention and cost 
+savings, temporarily expanding a Kafka storage volume may not be 
+straightforward. An important factor here becomes reliably notifying a human 
+when the job fails. Unfortunately this can be difficult to integrate with 
+Spark, and most of my solutions have involved terrible Bash scripts. 
 
-I also discovered that recovery wasn't 100% reliable. Structured Streaming 
-makes it clear that S3 is not a valid location to store checkpoint data, 
-because it does not provide the consistency guarantees that a real filesystem 
-does. What I found, though, was that it appears to still insist on storing 
-some metadata in S3, and uses this in combination with the actual checkpoint
-to recover the job, resulting in some lost data. In particular, it appears to
-look at "batch" numbers within the metadata, and skip batches which have 
-already "occurred", which semantically makes no sense to me because batch 
-number is meaningless and will not contain the same offsets from job to job.
-Luckily this appears to be a rare, and I've managed to mostly avoid it, but I 
-consider it to be a bug. 
+Spark's recovery mechanism is not 100% bulletproof, and when it does fail you
+tend to find yourself in a pickle because the correctness guarantees in the 
+application become your enemy when checkpoint data and output data no longer 
+agree. Structured Streaming makes it clear that S3 is not a valid location to 
+store checkpoint data, because it does not provide the consistency guarantees 
+that a real filesystem does. What I have found, though, was that Spark appears 
+to still insist on storing some metadata in S3, and uses this in combination 
+with the actual checkpoint to recover the job, preventing you from fully 
+avoiding these consistency issues. In particular, Spark appears to look at 
+"batch" numbers within the S3 metadata, and skip batches which have already 
+"occurred", which semantically makes no sense because batch numbers are 
+meaningless and will not contain the same offsets from job to job. Luckily 
+this appears to be rare, and I've managed to mostly avoid it, but I consider it 
+to be a bug.
 
-**Failure Modes**
+A general process that I've developed for repairing issues like this are:
+
+ 1. Include offsets in output data.
+ 2. When a failure occurs, identify the offset of the last state-of-the-world 
+    snapshot message for each Kafka partition. 
+ 3. Use a separate Spark job to delete output data which comes after these 
+    offsets, to avoid having duplicate data. 
+ 4. Manually specify these starting offsets for your streaming job. 
+ 5. Back up and then delete checkpoint data (both locations) for streaming job.  
+ 6. Start your new streaming job. 
+
+### EMR Issues and Moving to Kubernetes
+
+AWS' Elastic MapReduce (EMR), and many other vendored Spark solutions, may not 
+be the best choice for pure Spark streaming queries like this. As mentioned 
+earlier, some vendors offer customized versions of packages, which can offer 
+significant performance improvements and great new features, but complicates 
+the development process and introduces lock-in. Most vendors do offer the 
+latest versions of packages, but deeper levels of customization can be made 
+more difficult by managed offerings. 
+
+With EMR I noticed several undesirable things. First, EMR runs a full 
+Yarn managed Hadoop cluster. For pure Spark applications, this is a lot of 
+overhead, and I found myself using nodes almost twice the size of the nodes
+used for full-scale testing. Second, many vendors tend to run their Spark 
+clusters "hot", configuring memory settings higher relative to the hardware 
+available, preferring less swapping of data to disk in exchange for more 
+frequent lost tasks. For a traditional Spark job, this makes a lot of sense. 
+Spark handles re-execution of the occasional lost task gracefully. For 
+streaming jobs, however, it is much less desirable to occasionally lose 
+executors, and I have found this to be one of the largest causes of failures 
+that cannot be smoothly recovered from.   
+
+Eventually I migrated this workload to Kubernetes. Self-managed clusters on 
+Kubernetes offer a number of advantages:
+
+ * Container images can be built with the exact dependencies that your job 
+   needs, simplifying (I think) the continuous delivery process.
+ * Clusters can be dynamically provisioned for single-tenant workloads using
+   one of the many Helm charts out there.
+ * Kubernetes appears to have lower overhead, and you know what resources you
+   are actually getting via Pod resource requests.
+ * Running Spark in standalone mode is perfectly fine, and reduces complexity.  
+ * Streaming queries can be submitted in client mode as a Job for 
+   Kubernetes-native tracking of application failures and retries. 
+
+If you are an organization which already leverages Kubernetes, I definitely
+recommend exploring this approach. If not, similar results can be achieved with
+AMIs and Terraform to automate provisioning of single tenant Spark standalone
+clusters. If you go with either of these routes, I definitely recommend 
+installing a log aggregation solution for quickly investigating issues, as 
+digging through Spark logs in the Web UI or on the nodes themselves can be
+very cumbersome.    
+
+## Failure Modes and Mitigations
 
 I quickly discovered that there are really several kinds of failure modes in
 streaming jobs. I will list them in order of increasing severity. 
@@ -508,34 +625,6 @@ environmental. An environmental failure is one such as my memory issues, where
 tasks fail, but they can simply be resumed once memory settings are adjusted. 
 Structural failures are where   
 
-**EMR Issues**
-
-I eventually decided that EMR was partly responsible for my memory issues, they
-seem to run "hot", preferring to occasionally have to rerun failed tasks in 
-exchange for a higher memory limit. The issue with this is that streaming jobs 
-do not seem to handle lost tasks as elegantly as traditional Spark queries.
-
-I soon became frustrated with the premium I was paying for larger instances
-which did not seem necessary, as well as continued trouble with package 
-management between EMR and my development environment.  
-
-**Moving to Kubernetes**
-
-Eventually I elected to move to Kubernetes, deploying Spark in standalone mode
-using containers that I created myself. This has a number of advantages in my
-mind:
-
-* Eliminates Yarn (Kubernetes is now the orchestrator). 
-* No requirements over the number and types of nodes I needed. 
-* Seemingly less memory overhead and better control.
-* Custom built Spark images with exactly the packages I needed, even running 
-  the latest version of Spark and Hadoop. 
-* There are simple helm charts for deploying these clusters. 
-
-With all of these hurdles out of the way, my memory issues subsided, I finally 
-felt good about my pipeline, and things ran smoothly for several months. 
-
-TODO: Diagram of CICD here
 
 ## Tragedy Strikes
 
