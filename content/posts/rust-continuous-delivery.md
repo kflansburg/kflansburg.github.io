@@ -2,12 +2,14 @@
 title: "Rust Continuous Delivery"
 date: "2020-11-21T08:07:16-06:00"
 draft: true
-tags: 
- - AWS
- - Terraform
- - Rust
- - CICD
- - Kubernetes
+tags:
+
+- AWS
+- Terraform
+- Rust
+- CICD
+- Kubernetes
+
 ---
 
 Gahroooo
