@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
+	<title>Rust Continuous Delivery</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+    
+    <a href="http://kflansburg.com/">kflansburg.com</a>
+    
+    
+    <div style="float: right;">Discussions on Rust, Kubernetes, and more.</div><br>
+    <p>
+    <nav>
+        <div style='text-align: center;'>
+        
+            |
+            
+            <a href="/posts"><b>Posts</b></a> |
+        
+            <a href="/tags"><b>Tags</b></a> |
+        
+        </div>
+    </nav>
+    </p>
+    
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Rust Continuous Delivery</h1>
+                        
+   			<b><time>26.11.2020</time></b>
+   			<span>-- 1836 Words</span><br/>
+		       
+		           <a href="/tags/aws">AWS</a>
+        	       
+		           <a href="/tags/terraform">Terraform</a>
+        	       
+		           <a href="/tags/rust">Rust</a>
+        	       
+		           <a href="/tags/cicd">CICD</a>
+        	       
+		           <a href="/tags/kubernetes">Kubernetes</a>
+        	       
+                       
+			<div>
+				<p>Over the last few years I have iterated several times on continuous delivery
+pipelines for Rust applications. In this post I will describe several of these
+iterations, lessons learned, and share my most recent solution in detail.</p>
+<h1 id="goals">Goals</h1>
+<p>For most teams a continuous delivery (CD) process involves a series of
+automated steps, with occasional human gates, which move code from pull request
+to production. This ensures that high quality code reaches production, while
+reducing the human effort involved in a release.</p>
+<p>My use case involved a number of quirks:</p>
+<ul>
+<li>I was the sole maintainer on over a dozen projects. This meant that complex
+<code>git</code> workflows did not add much value, but I desired a high level of
+automation and as much help validating the code as possible.</li>
+<li>In rare cases I would need to get a patch into production as quickly as
+possible. I wanted to target 10 minutes or less with whatever solution I
+developed.</li>
+<li>Rust can have long compile times, so efforts had to be taken to engineer
+around this.</li>
+</ul>
+<h2 id="gitlab-and-docker-swarm">GitLab and Docker Swarm</h2>
+<p>GitLab was an early mover when it came to integrating CI/CD directly with code
+repositories. I was already hosting my code with GitLab at the time, and was
+eager to automate the testing and release process. For simplicity, I elected to
+use GitLab&rsquo;s container registry for storing images built by the pipeline.</p>
+<p>I was also beginning to be overwhelmed with the number services that I was
+managing, and looking at container orchestration solutions to integrate with
+this pipeline. Like many small ventures, I felt that Kubernetes was too complex
+for my needs, and instead opted for Docker Swarm. Despite its limited adoption,
+Docker Swarm was a good stepping stone before taking on the complexity of
+Kubernetes.</p>
+<h3 id="cached-rust-builds">Cached Rust Builds</h3>
+<p>The first optimization for Rust involves modifying Dockerfiles to better
+leverage build caching and produce smaller production images. This isn&rsquo;t a
+novel solution, but it is worth mentioning.</p>
+<p>First, <code>cargo build</code> is split into two steps. The first builds all dependencies
+based on <code>Cargo.toml</code> and <code>Cargo.lock</code>. These layers will only be rebuilt if
+Rust releases a new stable version or you modify dependencies. Second, the
+application itself is built, this will be rebuilt whenever you modify your
+application&rsquo;s source code. Finally, the application&rsquo;s binary is copied to a
+second stage which builds the runtime container. It is possible to build an
+even slimmer runtime image by statically linking against <code>musl</code> and creating
+a <code>FROM scratch</code> container, but I have not found this to be definitively
+better.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt" id="0"> 0
+</span><span class="lnt" id="1"> 1
+</span><span class="lnt" id="2"> 2
+</span><span class="lnt" id="3"> 3
+</span><span class="lnt" id="4"> 4
+</span><span class="lnt" id="5"> 5
+</span><span class="lnt" id="6"> 6
+</span><span class="lnt" id="7"> 7
+</span><span class="lnt" id="8"> 8
+</span><span class="lnt" id="9"> 9
+</span><span class="lnt" id="10">10
+</span><span class="lnt" id="11">11
+</span><span class="lnt" id="12">12
+</span><span class="lnt" id="13">13
+</span><span class="lnt" id="14">14
+</span><span class="lnt" id="15">15
+</span><span class="lnt" id="16">16
+</span><span class="lnt" id="17">17
+</span><span class="lnt" id="18">18
+</span><span class="lnt" id="19">19
+</span><span class="lnt" id="20">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Docker" data-lang="Docker"><span class="c"># Stable</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> rust:latest as build</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="c"># Build Dependancies</span><span class="err">
+</span><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /build</span><span class="err">
+</span><span class="err"></span><span class="k">RUN</span> <span class="nv">USER</span><span class="o">=</span>root cargo new --bin app<span class="err">
+</span><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /build/app</span><span class="err">
+</span><span class="err"></span><span class="k">COPY</span> Cargo.toml .<span class="err">
+</span><span class="err"></span><span class="k">COPY</span> Cargo.lock .<span class="err">
+</span><span class="err"></span><span class="k">RUN</span> cargo build --release<span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="c"># Build Application</span><span class="err">
+</span><span class="err"></span><span class="k">RUN</span> rm src/*.rs<span class="err">
+</span><span class="err"></span><span class="k">RUN</span> rm ./target/release/deps/app<span class="err">
+</span><span class="err"></span><span class="k">COPY</span> src/ src/<span class="err">
+</span><span class="err"></span><span class="k">RUN</span> cargo build --release<span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="c"># Build Run</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> debian:stable-slim AS run</span><span class="err">
+</span><span class="err"></span><span class="k">COPY</span> --from<span class="o">=</span>builder /build/app/target/release/app app<span class="err">
+</span><span class="err"></span><span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="s2">&#34;./app&#34;</span><span class="p">]</span><span class="err">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>You will need to push both your <code>build</code> and <code>run</code> images in order to properly
+cache layers. If you only push your <code>run</code> image, build layers will not be
+included, and will not be available for caching in subsequent builds. Your
+build pipeline should first pull previous <code>build</code> and <code>run</code> images, build and
+tag the new images, and then push both. Since I&rsquo;m the only user of these
+images, I typically tag them by commit hash for precise referencing.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt" id="0"> 0
+</span><span class="lnt" id="1"> 1
+</span><span class="lnt" id="2"> 2
+</span><span class="lnt" id="3"> 3
+</span><span class="lnt" id="4"> 4
+</span><span class="lnt" id="5"> 5
+</span><span class="lnt" id="6"> 6
+</span><span class="lnt" id="7"> 7
+</span><span class="lnt" id="8"> 8
+</span><span class="lnt" id="9"> 9
+</span><span class="lnt" id="10">10
+</span><span class="lnt" id="11">11
+</span><span class="lnt" id="12">12
+</span><span class="lnt" id="13">13
+</span><span class="lnt" id="14">14
+</span><span class="lnt" id="15">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># Ignore pull failures since this is just for the cache.</span>
+docker pull <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:cache <span class="o">||</span> <span class="nb">true</span>
+docker pull <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:latest <span class="o">||</span> <span class="nb">true</span>
+
+docker build --target build <span class="se">\
+</span><span class="se"></span>    --cache-from <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:cache <span class="se">\
+</span><span class="se"></span>    --tag <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:cache .
+docker build --target run <span class="se">\
+</span><span class="se"></span>    --cache-from <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:latest <span class="se">\
+</span><span class="se"></span>    --cache-from <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:cache <span class="se">\
+</span><span class="se"></span>    --tag <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:<span class="k">$(</span>git rev-parse HEAD<span class="k">)</span> <span class="se">\
+</span><span class="se"></span>    --tag <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:latest .
+
+docker push <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:cache
+docker push <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:<span class="k">$(</span>git rev-parse HEAD<span class="k">)</span>
+docker push <span class="si">${</span><span class="nv">REGISTRY_URL</span><span class="si">}</span>:latest
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="terraform">Terraform</h3>
+<p>After an image is built, I wanted to continue manually triggering the actual
+update process. To complete the automation of this deployment pattern,
+Terraform was used to provision Docker Swarm nodes and configure workloads in
+the cluster itself by connecting to the daemon via mTLS. In this way, I could
+update the image tag in one place and Terraform would update the many services
+using that image. I don&rsquo;t think Terraform is perfect, but I much prefer it to
+Helm for composing and validating complex cluster deployments.</p>
+<h2 id="sourcehut-then-github">sourcehut then GitHub</h2>
+<p>I soon grew frustrated with GitLab&rsquo;s application performance. I found the user
+interface to be fairly inefficient to navigate, and this was coupled with slow
+page load times to create a very aggravating experience. I also grew frustrated
+with the build pipeline. A number of minor outages resulted in the inability to
+build images for hours at a time. Even with caching, build times were quite
+long, and I briefly experimented with using GitLab&rsquo;s self-hosted runner
+integration. This was quite slick, but was a lot of work to manage for what
+was intended to be an integrated solution.</p>
+<p>Around this time, sourcehut was launched, and the lightweight pages with fast
+load times were quite appealing. sourcehut also introduced its own integrated
+build pipelines, and I felt that even if these were too slow, I would be no
+worse off than with GitLab. I decided to migrate a few repositories as a pilot.
+sourcehut was quite nice, and is definitely something I would consider for
+personal projects, but I quickly decided that it was too early for
+production use. A major concern was that the build logs were public, which was
+annoying to have to keep in mind when developing the pipeline. Additionally,
+at one point the configuration required to build Docker images was changed,
+breaking all of my builds. Finally, I encountered issues with using my private
+SSH key to authenticate with multiple accounts (business and personal).</p>
+<p>These issues were not critical, but I began looking at GitHub again for the
+first time since 2016. Microsoft had acquired GitHub, and built out a number of
+new features, including Actions, Projects, and Packages. I played around with
+some of these features, but the deciding factor was their decision to grant
+free accounts unlimited private repositories. At this point, I began migrating
+all of my repositories to a new GitHub organization. It is worth noting that
+I was still using the same general deployment architecture, just with Actions
+and Packages in place of GitLab&rsquo;s offerings.</p>
+<p>I&rsquo;d like to point out that all of these services are great options, and none
+of these concerns are deal breakers. I know that all of these platforms are
+actively working to address these concerns. I have clearly spent a lot of time
+hopping between platforms, and I would not recommend this unless one of your
+hobbies is optimizing developer quality of life.</p>
+<p>One thing that I developed during this process that I would recommend is making
+your repositories as uniform as possible. My platform-specific CICD
+configurations are exactly the same for every repository of a given language.
+This means that migrating between platforms involves updating and testing <em>one</em>
+script, and then pulling, patching, and pushing can be automated with a Bash
+script. Combined with Terraform, this process can take just a few hours.</p>
+<h2 id="aws-codebuild-and-kubernetes">AWS CodeBuild and Kubernetes</h2>
+<p>Finally, I would like to share my current pipeline. This evolved over several
+months following my move to GitHub. A number of things changed over this time.
+First, I had become competent enough with Kubernetes that Docker Swarm began
+to be the more complex option when compared to Terraform + AWS' Elastic
+Kubernetes Service (EKS). The remaining itch I had was build times. In my
+previous experiments with GitLab runners, the idea of having control over the
+VM size for building was very appealing, but having to either pay for this
+machine full time or develop complex behavior for starting and stopping the
+machine was daunting.</p>
+<p>Eventually I found AWS CodeBuild, which does exactly what I want: trigger
+builds with GitHub webhooks, run them on an enormous machine for just a minute
+or two, and then shut it down when done. I&rsquo;m able to achieve insanely fast
+builds, and only pay a few cents per build (much cheaper than many CICD
+services). Finally, Elastic Container Registry (ECR) was an obvious choice for
+container hosting, with simple integration with EKS, default-private
+repositories, and immutable image tags. I know this sounds like an AWS ad, but
+I expect other cloud providers will catch up eventually. Azure DevOps seems
+like an obvious candidate for a premium GitHub Actions option.</p>
+<p>This diagram provides a nice overview of my workflow:</p>
+<p>
+<figure>
+  <img src="/pipeline.svg" alt="Pipeline" />
+</figure>
+
+
+</p>
+<ol>
+<li>I typically run tests and lints locally, and then push to a development
+branch. I create a pull request for the purposes of self-code review. I then
+merge to <code>main</code>.</li>
+<li>GitHub invokes a webhook to CodeBuild to notify it of the new commit to
+<code>main</code>.</li>
+<li>CodeBuild launches the configured instance type (72 cores, $0.20 / min).</li>
+<li>The instance pulls code from GitHub using a configured build token.</li>
+<li>The instance pulls Docker images for caching from ECR.</li>
+<li>The build script runs rustfmt, clippy, tests, doctests, and then finally
+builds a release binary and Docker image.</li>
+<li>The image artifact and cache images are pushed to ECR.</li>
+<li>I manually trigger Terraform to update the images specified in Kubernetes
+Deployments.</li>
+<li>EKS performs a rolling update of my Deployments, pulling the new image from
+ECR.</li>
+</ol>
+<p>The icing on the cake, is that <em>all</em> of this is configured with Terraform,
+including GitHub repo, webhook, CodeBuild job, and ECR repository. Adding a
+new codebase is as simple as adding a new entry in a Terraform list variable
+and applying the plan.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>This may seem like a lot of complexity for a one developer operation, but I
+think that situations like this are where time spent on DevOps really pays off.
+With a little discipline, you can scale quite a bit with even the smallest of
+teams. I&rsquo;ve identified a couple of key takeaways from this journey:</p>
+<p>First, just like servers, codebases for your applications should be cattle, not
+pets. The only information you should need for configuring your entire build
+pipeline should be the language it is written in and the human readable name
+for the app. This eliminates a lot of the complexity of deployment, not only
+because you can automate repository operations, but because you no longer
+have to remember the idiosyncrasies of each application.</p>
+<p>Second, integrated platforms are great, but they all have quirks. You don&rsquo;t
+have to jump around, but be aware of what the competition has, it can give
+you some great ideas on what you need to improve. If you are willing to
+integrate multiple services, you can achieve some really great performance
+at low cost, while reducing vendor lock-in.</p>
+<p>Finally, infrastructure (and application configuration!) as code
+is critical to avoiding toil work. Even if you only plan to set something up
+once, I have found the process of developing the code for it can help you to
+understand how you are configuring it more thoroughly, as well detect and
+revert configuration drift.</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/posts/rust-continuous-delivery/">Rust Continuous Delivery</a></li>
+				
+				<li><a href="/posts/a-fistful-of-states/">A Fistful of States: More State Machine Patterns in Rust</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2020 <a href="http://kflansburg.com/"><b>Kevin Flansburg</b></a>.
+	<a href="https://github.com/kflansburg"><b>GitHub</b></a>.
+	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a>.
+	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a>.
+	</p>
+</footer>
+
+<script data-goatcounter="https://kflansburg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

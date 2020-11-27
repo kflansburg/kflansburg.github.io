@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Wed, 23 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://kflansburg.com/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://kflansburg.com/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rust Continuous Delivery</title>
+      <link>http://kflansburg.com/posts/rust-continuous-delivery/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://kflansburg.com/posts/rust-continuous-delivery/</guid>
+      <description>&lt;p&gt;Over the last few years I have iterated several times on continuous delivery
+pipelines for Rust applications. In this post I will describe several of these
+iterations, lessons learned, and share my most recent solution in detail.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>A Fistful of States: More State Machine Patterns in Rust</title>
       <link>http://kflansburg.com/posts/a-fistful-of-states/</link>
