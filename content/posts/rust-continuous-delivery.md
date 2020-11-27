@@ -164,12 +164,46 @@ actively working to address these concerns. I have clearly spent a lot of time
 hopping between platforms, and I would not recommend this unless one of your
 hobbies is optimizing developer quality of life.
 
-One thing that I developed during this process that I would recommend is making
+One thing that I did during this process that I *would* recommend is making
 your repositories as uniform as possible. My platform-specific CICD
 configurations are exactly the same for every repository of a given language.
 This means that migrating between platforms involves updating and testing *one*
 script, and then pulling, patching, and pushing can be automated with a Bash
-script. Combined with Terraform, this process can take just a few hours.
+script. If you do need to migrate platforms for some reason, this process can
+take just a few hours when combined with Terraform.
+
+## Automated Rust Code Validation
+
+I employ a number of steps for validating my Rust code. These are not
+revolutionary, but I will include them here for those that are not aware.
+
+1. `cargo fmt --check` Applies `rustfmt`, and fails if there are any changes
+   that are expected. This may seem pedantic, but Rust can be hard to parse
+   for new Rust programmers, and maintaining a highly idiomatic format in your
+   codebase is super easy and can reduce cognitive overhead of reading new
+   code.
+1. `cargo clippy` applies code-level checks to your application, identifying
+   unused imports, non-idiomatic control flow, and unnecessary clones. This
+   prevents cruft build up and occasionally improves performance (slightly).
+1. The compiler does a lot to detect where type-level API changes break 
+   consumers of that API. I use unit tests to validate business logic which is
+   not caught by the compiler. A common example here is when manually parsing
+   binary messages, unit tests can help detect off-by-one errors and other
+   subtle bugs that occur when slicing arrays.
+1. Rust documentation can include examples which can be run as tests as well to 
+   validate that they compile and run without error (thus maintaining valid 
+   documentation). For my use, extensive documentation is not very valuable, 
+   however these tests can be used to assert that things *don't compile*, which
+   can be good for verifying that invalid states are recognized as invalid by
+   the compiler. These tests are very brittle, so I use them sparingly. 
+1. For performance sensitive code, I recommend `criterion` for benchmarking
+   critical functions and detecting performance regressions. I currently use
+   this only on my local development machine, but it could be integrated into
+   a continuous delivery pipeline as well. 
+
+These tests will obviously not eliminate bugs, but they can eliminate a lot
+of the toil involved in spotting these types of issues, and in doing so ensure
+that this is done thoroughly on every commit. 
 
 ## AWS CodeBuild and Kubernetes
 
@@ -217,6 +251,22 @@ The icing on the cake, is that *all* of this is configured with Terraform,
 including GitHub repo, webhook, CodeBuild job, and ECR repository. Adding a
 new codebase is as simple as adding a new entry in a Terraform list variable
 and applying the plan.
+
+## Next Steps
+
+I currently still use GitHub Actions to perform validation steps on pull
+requests before they are merged. This can still be quite slow and so I do
+not require these tests to pass before I merge, they will be repeated during
+the release build anyway. I would eventually like to set up a second CodeBuild
+pipeline for validation only, and have the results sent back to GitHub for
+display in the pull request page.
+
+As mentioned above, I would also like to explore automated benchmarking within
+my pipeline, with proper caching of previous results to detect regressions. 
+This has the advantage that benchmarks will be conducted on a consistently 
+sized machine with little else running on it. Ideally these results could
+be inserted directly into pull requests to document any regressions or 
+improvements.  
 
 ## Conclusion
 

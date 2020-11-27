@@ -1,5 +1,5 @@
-@import "_syntax-light.css";
-@import "_syntax-dark.css" (prefers-color-scheme: dark);
+@import "syntax-light.css";
+@import "syntax-dark.css" (prefers-color-scheme: dark);
 
 a:link {
     color: #00e;
@@ -26,7 +26,7 @@ h1,h2,h3 {
     line-height: 1.2
 }
 
-p > code{
+p > code, li > code {
     font: 14px/1.5 monospace;
     color: #444;
     background: #eee;
@@ -49,6 +49,10 @@ p > code{
         color: #5bf
     }
     p > code{
+        color: #8a8a8a;
+        background: #1c1c1c;
+    }
+    li > code{
         color: #8a8a8a;
         background: #1c1c1c;
     }

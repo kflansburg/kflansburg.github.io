@@ -42,7 +42,7 @@
 			<h1>Rust Continuous Delivery</h1>
                         
    			<b><time>26.11.2020</time></b>
-   			<span>-- 1836 Words</span><br/>
+   			<span>-- 2294 Words</span><br/>
 		       
 		           <a href="/tags/aws">AWS</a>
         	       
@@ -232,12 +232,44 @@ of these concerns are deal breakers. I know that all of these platforms are
 actively working to address these concerns. I have clearly spent a lot of time
 hopping between platforms, and I would not recommend this unless one of your
 hobbies is optimizing developer quality of life.</p>
-<p>One thing that I developed during this process that I would recommend is making
+<p>One thing that I did during this process that I <em>would</em> recommend is making
 your repositories as uniform as possible. My platform-specific CICD
 configurations are exactly the same for every repository of a given language.
 This means that migrating between platforms involves updating and testing <em>one</em>
 script, and then pulling, patching, and pushing can be automated with a Bash
-script. Combined with Terraform, this process can take just a few hours.</p>
+script. If you do need to migrate platforms for some reason, this process can
+take just a few hours when combined with Terraform.</p>
+<h2 id="automated-rust-code-validation">Automated Rust Code Validation</h2>
+<p>I employ a number of steps for validating my Rust code. These are not
+revolutionary, but I will include them here for those that are not aware.</p>
+<ol>
+<li><code>cargo fmt --check</code> Applies <code>rustfmt</code>, and fails if there are any changes
+that are expected. This may seem pedantic, but Rust can be hard to parse
+for new Rust programmers, and maintaining a highly idiomatic format in your
+codebase is super easy and can reduce cognitive overhead of reading new
+code.</li>
+<li><code>cargo clippy</code> applies code-level checks to your application, identifying
+unused imports, non-idiomatic control flow, and unnecessary clones. This
+prevents cruft build up and occasionally improves performance (slightly).</li>
+<li>The compiler does a lot to detect where type-level API changes break
+consumers of that API. I use unit tests to validate business logic which is
+not caught by the compiler. A common example here is when manually parsing
+binary messages, unit tests can help detect off-by-one errors and other
+subtle bugs that occur when slicing arrays.</li>
+<li>Rust documentation can include examples which can be run as tests as well to
+validate that they compile and run without error (thus maintaining valid
+documentation). For my use, extensive documentation is not very valuable,
+however these tests can be used to assert that things <em>don&rsquo;t compile</em>, which
+can be good for verifying that invalid states are recognized as invalid by
+the compiler. These tests are very brittle, so I use them sparingly.</li>
+<li>For performance sensitive code, I recommend <code>criterion</code> for benchmarking
+critical functions and detecting performance regressions. I currently use
+this only on my local development machine, but it could be integrated into
+a continuous delivery pipeline as well.</li>
+</ol>
+<p>These tests will obviously not eliminate bugs, but they can eliminate a lot
+of the toil involved in spotting these types of issues, and in doing so ensure
+that this is done thoroughly on every commit.</p>
 <h2 id="aws-codebuild-and-kubernetes">AWS CodeBuild and Kubernetes</h2>
 <p>Finally, I would like to share my current pipeline. This evolved over several
 months following my move to GitHub. A number of things changed over this time.
@@ -286,6 +318,19 @@ ECR.</li>
 including GitHub repo, webhook, CodeBuild job, and ECR repository. Adding a
 new codebase is as simple as adding a new entry in a Terraform list variable
 and applying the plan.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>I currently still use GitHub Actions to perform validation steps on pull
+requests before they are merged. This can still be quite slow and so I do
+not require these tests to pass before I merge, they will be repeated during
+the release build anyway. I would eventually like to set up a second CodeBuild
+pipeline for validation only, and have the results sent back to GitHub for
+display in the pull request page.</p>
+<p>As mentioned above, I would also like to explore automated benchmarking within
+my pipeline, with proper caching of previous results to detect regressions.
+This has the advantage that benchmarks will be conducted on a consistently
+sized machine with little else running on it. Ideally these results could
+be inserted directly into pull requests to document any regressions or
+improvements.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>This may seem like a lot of complexity for a one developer operation, but I
 think that situations like this are where time spent on DevOps really pays off.
