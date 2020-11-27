@@ -2,63 +2,63 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on kflansburg.com</title>
-    <link>http://kflansburg.com/tags/</link>
+    <link>https://kflansburg.com/tags/</link>
     <description>Recent content in Tags on kflansburg.com</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://kflansburg.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>AWS</title>
-      <link>http://kflansburg.com/tags/aws/</link>
+      <link>https://kflansburg.com/tags/aws/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://kflansburg.com/tags/aws/</guid>
+      <guid>https://kflansburg.com/tags/aws/</guid>
       <description></description>
     </item>
     
     <item>
       <title>CICD</title>
-      <link>http://kflansburg.com/tags/cicd/</link>
+      <link>https://kflansburg.com/tags/cicd/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://kflansburg.com/tags/cicd/</guid>
+      <guid>https://kflansburg.com/tags/cicd/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Kubernetes</title>
-      <link>http://kflansburg.com/tags/kubernetes/</link>
+      <link>https://kflansburg.com/tags/kubernetes/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://kflansburg.com/tags/kubernetes/</guid>
+      <guid>https://kflansburg.com/tags/kubernetes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Rust</title>
-      <link>http://kflansburg.com/tags/rust/</link>
+      <link>https://kflansburg.com/tags/rust/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://kflansburg.com/tags/rust/</guid>
+      <guid>https://kflansburg.com/tags/rust/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Terraform</title>
-      <link>http://kflansburg.com/tags/terraform/</link>
+      <link>https://kflansburg.com/tags/terraform/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://kflansburg.com/tags/terraform/</guid>
+      <guid>https://kflansburg.com/tags/terraform/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Krustlet</title>
-      <link>http://kflansburg.com/tags/krustlet/</link>
+      <link>https://kflansburg.com/tags/krustlet/</link>
       <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://kflansburg.com/tags/krustlet/</guid>
+      <guid>https://kflansburg.com/tags/krustlet/</guid>
       <description></description>
     </item>
     

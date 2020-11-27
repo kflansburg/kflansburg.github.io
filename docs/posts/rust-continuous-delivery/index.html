@@ -7,7 +7,29 @@
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
 	<title>Rust Continuous Delivery</title>
-	
+        <meta property="og:title" content="Rust Continuous Delivery" />
+<meta property="og:description" content="Over the last few years I have iterated several times on continuous delivery
+pipelines for Rust applications. Designing these pipelines involves balancing
+a number of factors including cost, complexity, ergonomics, and rigor. In this
+post I will describe several of these iterations, lessons learned, and share my
+most recent solution in detail." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kflansburg.com/posts/rust-continuous-delivery/" />
+<meta property="og:image" content="https://kflansburg.com/profile.jpg"/>
+<meta property="article:published_time" content="2020-11-26T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-26T00:00:00+00:00" />
+
+        <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
+
+<meta name="twitter:title" content="Rust Continuous Delivery"/>
+<meta name="twitter:description" content="Over the last few years I have iterated several times on continuous delivery
+pipelines for Rust applications. Designing these pipelines involves balancing
+a number of factors including cost, complexity, ergonomics, and rigor. In this
+post I will describe several of these iterations, lessons learned, and share my
+most recent solution in detail."/>
+
+	<meta name="description" content="Discussions on Rust, Kubernetes, and more.">
 	
 	<link rel="stylesheet" href="/css/style.css">
 	
@@ -16,7 +38,7 @@
 <body>
 	<header>
     
-    <a href="http://kflansburg.com/">kflansburg.com</a>
+    <a href="https://kflansburg.com/">kflansburg.com</a>
     
     
     <div style="float: right;">Discussions on Rust, Kubernetes, and more.</div><br>
@@ -26,9 +48,9 @@
         
             |
             
-            <a href="/posts"><b>Posts</b></a> |
+            <a href="/posts/"><b>Posts</b></a> |
         
-            <a href="/tags"><b>Tags</b></a> |
+            <a href="/tags/"><b>Tags</b></a> |
         
         </div>
     </nav>
@@ -44,15 +66,15 @@
    			<b><time>26.11.2020</time></b>
    			<span>-- 2277 Words</span><br/>
 		       
-		           <a href="/tags/aws">AWS</a>
+		           <a href="/tags/aws/">AWS</a>
         	       
-		           <a href="/tags/terraform">Terraform</a>
+		           <a href="/tags/terraform/">Terraform</a>
         	       
-		           <a href="/tags/rust">Rust</a>
+		           <a href="/tags/rust/">Rust</a>
         	       
-		           <a href="/tags/cicd">CICD</a>
+		           <a href="/tags/cicd/">CICD</a>
         	       
-		           <a href="/tags/kubernetes">Kubernetes</a>
+		           <a href="/tags/kubernetes/">Kubernetes</a>
         	       
                        
 			<div>
@@ -61,7 +83,7 @@ pipelines for Rust applications. Designing these pipelines involves balancing
 a number of factors including cost, complexity, ergonomics, and rigor. In this
 post I will describe several of these iterations, lessons learned, and share my
 most recent solution in detail.</p>
-<h1 id="requirements-for-continuous-delivery">Requirements for Continuous Delivery</h1>
+<h2 id="requirements-for-continuous-delivery">Requirements for Continuous Delivery</h2>
 <p>For most teams a continuous delivery (CD) process involves a series of
 automated steps, with occasional human gates, which move code from pull request
 to production. This ensures that high quality code reaches production, while
@@ -374,7 +396,7 @@ revert configuration drift.</p>
 
 
 	<footer>
-	<p>&copy; 2020 <a href="http://kflansburg.com/"><b>Kevin Flansburg</b></a>.
+	<p>&copy; 2020 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a>.
 	<a href="https://github.com/kflansburg"><b>GitHub</b></a>.
 	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a>.
 	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a>.

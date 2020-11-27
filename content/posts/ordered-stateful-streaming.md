@@ -18,7 +18,7 @@ improvements going forward.
 
 <!--more-->
 
-# Problem Statement
+## Problem Statement
 
 Let's say that you want to stream updates from a constantly changing set
 of collection points. Each collection point produces a table of data containing

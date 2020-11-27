@@ -20,7 +20,7 @@ most recent solution in detail.
 
 <!--more-->
 
-# Requirements for Continuous Delivery
+## Requirements for Continuous Delivery
 
 For most teams a continuous delivery (CD) process involves a series of
 automated steps, with occasional human gates, which move code from pull request
