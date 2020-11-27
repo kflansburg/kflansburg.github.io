@@ -15,8 +15,10 @@
       
       <guid>http://kflansburg.com/posts/rust-continuous-delivery/</guid>
       <description>&lt;p&gt;Over the last few years I have iterated several times on continuous delivery
-pipelines for Rust applications. In this post I will describe several of these
-iterations, lessons learned, and share my most recent solution in detail.&lt;/p&gt;</description>
+pipelines for Rust applications. Designing these pipelines involves balancing
+a number of factors including cost, complexity, ergonomics, and rigor. In this
+post I will describe several of these iterations, lessons learned, and share my
+most recent solution in detail.&lt;/p&gt;</description>
     </item>
     
     <item>

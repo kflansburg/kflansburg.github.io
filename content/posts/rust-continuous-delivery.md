@@ -13,12 +13,14 @@ tags:
 ---
 
 Over the last few years I have iterated several times on continuous delivery
-pipelines for Rust applications. In this post I will describe several of these
-iterations, lessons learned, and share my most recent solution in detail.
+pipelines for Rust applications. Designing these pipelines involves balancing
+a number of factors including cost, complexity, ergonomics, and rigor. In this
+post I will describe several of these iterations, lessons learned, and share my
+most recent solution in detail.
 
 <!--more-->
 
-# Goals
+# Requirements for Continuous Delivery
 
 For most teams a continuous delivery (CD) process involves a series of
 automated steps, with occasional human gates, which move code from pull request
@@ -31,10 +33,8 @@ My use case involved a number of quirks:
   `git` workflows did not add much value, but I desired a high level of
   automation and as much help validating the code as possible.
 - In rare cases I would need to get a patch into production as quickly as
-  possible. I wanted to target 10 minutes or less with whatever solution I
-  developed.
-- Rust can have long compile times, so efforts had to be taken to engineer
-  around this.
+  possible (10 minutes or less).
+- Rust can have long compile times, so incremental builds were important.
 
 ## GitLab and Docker Swarm
 
@@ -50,11 +50,11 @@ for my needs, and instead opted for Docker Swarm. Despite its limited adoption,
 Docker Swarm was a good stepping stone before taking on the complexity of
 Kubernetes.
 
-### Cached Rust Builds
+### Cached Rust Container Builds
 
-The first optimization for Rust involves modifying Dockerfiles to better
-leverage build caching and produce smaller production images. This isn't a
-novel solution, but it is worth mentioning.
+The most important optimization for Rust build pipelines involves modifying
+Dockerfiles to better leverage build caching and produce smaller production
+images. This isn't a novel solution, but it is worth mentioning.
 
 First, `cargo build` is split into two steps. The first builds all dependencies
 based on `Cargo.toml` and `Cargo.lock`. These layers will only be rebuilt if
@@ -90,12 +90,13 @@ COPY --from=builder /build/app/target/release/app app
 ENTRYPOINT ["./app"]
 ```
 
-You will need to push both your `build` and `run` images in order to properly
-cache layers. If you only push your `run` image, build layers will not be
-included, and will not be available for caching in subsequent builds. Your
-build pipeline should first pull previous `build` and `run` images, build and
-tag the new images, and then push both. Since I'm the only user of these
-images, I typically tag them by commit hash for precise referencing.
+You will need to push both your `build` and `run` images to your registry in
+order to properly cache layers. If you only push your `run` image, build
+layers will not be included, and will not be available for caching in
+subsequent builds. Your build pipeline should first pull previous `build` and
+`run` images, then build and tag the new images, and finally push them both.
+Since I'm the only user of these images, I typically tag them by commit hash
+for precise referencing.
 
 ```bash
 # Ignore pull failures since this is just for the cache.
@@ -121,33 +122,31 @@ docker push ${REGISTRY_URL}:latest
 After an image is built, I wanted to continue manually triggering the actual
 update process. To complete the automation of this deployment pattern,
 Terraform was used to provision Docker Swarm nodes and configure workloads in
-the cluster itself by connecting to the daemon via mTLS. In this way, I could
+the cluster itself by connecting to the daemon via mTLS. In this way I could
 update the image tag in one place and Terraform would update the many services
 using that image. I don't think Terraform is perfect, but I much prefer it to
 Helm for composing and validating complex cluster deployments.
 
 ## sourcehut then GitHub
 
-I soon grew frustrated with GitLab's application performance. I found the user
-interface to be fairly inefficient to navigate, and this was coupled with slow
-page load times to create a very aggravating experience. I also grew frustrated
-with the build pipeline. A number of minor outages resulted in the inability to
-build images for hours at a time. Even with caching, build times were quite
-long, and I briefly experimented with using GitLab's self-hosted runner
-integration. This was quite slick, but was a lot of work to manage for what
-was intended to be an integrated solution.
+Eventually I grew frustrated with GitLab's application performance. I found the
+user interface to be fairly inefficient to navigate, and this was coupled with
+slow page load times. I felt that the build pipeline on the free tier did not
+match other free offerings, and there was not a paid plan which directly
+addressed these concerns. A number of minor outages resulted in the inability
+to build images for hours at a time every few weeks. Even with caching, build
+times were quite long, and I briefly experimented with using GitLab's
+self-hosted runner integration. This was quite slick, but was a lot of work to
+manage for what was intended to be an integrated solution.
 
-Around this time, sourcehut was launched, and the lightweight pages with fast
+Around this time sourcehut was launched and the lightweight pages with fast
 load times were quite appealing. sourcehut also introduced its own integrated
-build pipelines, and I felt that even if these were too slow, I would be no
+build pipelines, and I felt that even if these were too slow I would be no
 worse off than with GitLab. I decided to migrate a few repositories as a pilot.
-sourcehut was quite nice, and is definitely something I would consider for
-personal projects, but I quickly decided that it was too early for
-production use. A major concern was that the build logs were public, which was
-annoying to have to keep in mind when developing the pipeline. Additionally,
-at one point the configuration required to build Docker images was changed,
-breaking all of my builds. Finally, I encountered issues with using my private
-SSH key to authenticate with multiple accounts (business and personal).
+I determined that sourcehut was great for the reasons described, and is
+definitely something I would consider for personal projects, but I quickly
+decided that it was too early for production use (which marketing material was
+pretty clear about).
 
 These issues were not critical, but I began looking at GitHub again for the
 first time since 2016. Microsoft had acquired GitHub, and built out a number of
@@ -158,11 +157,11 @@ all of my repositories to a new GitHub organization. It is worth noting that
 I was still using the same general deployment architecture, just with Actions
 and Packages in place of GitLab's offerings.
 
-I'd like to point out that all of these services are great options, and none
-of these concerns are deal breakers. I know that all of these platforms are
-actively working to address these concerns. I have clearly spent a lot of time
-hopping between platforms, and I would not recommend this unless one of your
-hobbies is optimizing developer quality of life.
+All of these services are great options, and none of these concerns are deal
+breakers. I know that all of these platforms are actively working to address
+these concerns. I have clearly spent a lot of time hopping between platforms,
+and I would not recommend this unless one of your hobbies is optimizing
+developer quality of life.
 
 One thing that I did during this process that I *would* recommend is making
 your repositories as uniform as possible. My platform-specific CICD
@@ -185,35 +184,35 @@ revolutionary, but I will include them here for those that are not aware.
 1. `cargo clippy` applies code-level checks to your application, identifying
    unused imports, non-idiomatic control flow, and unnecessary clones. This
    prevents cruft build up and occasionally improves performance (slightly).
-1. The compiler does a lot to detect where type-level API changes break 
+1. The compiler does a lot to detect where type-level API changes break
    consumers of that API. I use unit tests to validate business logic which is
    not caught by the compiler. A common example here is when manually parsing
    binary messages, unit tests can help detect off-by-one errors and other
    subtle bugs that occur when slicing arrays.
-1. Rust documentation can include examples which can be run as tests as well to 
-   validate that they compile and run without error (thus maintaining valid 
-   documentation). For my use, extensive documentation is not very valuable, 
+1. Rust documentation can include examples which can be run as tests as well to
+   validate that they compile and run without error (thus maintaining valid
+   documentation). For my use, extensive documentation is not very valuable,
    however these tests can be used to assert that things *don't compile*, which
    can be good for verifying that invalid states are recognized as invalid by
-   the compiler. These tests are very brittle, so I use them sparingly. 
+   the compiler. These tests are very brittle, so I use them sparingly.
 1. For performance sensitive code, I recommend `criterion` for benchmarking
    critical functions and detecting performance regressions. I currently use
    this only on my local development machine, but it could be integrated into
-   a continuous delivery pipeline as well. 
+   a continuous delivery pipeline as well.
 
 These tests will obviously not eliminate bugs, but they can eliminate a lot
 of the toil involved in spotting these types of issues, and in doing so ensure
-that this is done thoroughly on every commit. 
+that this is done thoroughly on every commit.
 
 ## AWS CodeBuild and Kubernetes
 
 Finally, I would like to share my current pipeline. This evolved over several
 months following my move to GitHub. A number of things changed over this time.
 First, I had become competent enough with Kubernetes that Docker Swarm began
-to be the more complex option when compared to Terraform + AWS' Elastic
-Kubernetes Service (EKS). The remaining itch I had was build times. In my
-previous experiments with GitLab runners, the idea of having control over the
-VM size for building was very appealing, but having to either pay for this
+to feel like the more complex option when compared with Terraform and AWS'
+Elastic Kubernetes Service (EKS). The remaining itch I had was build times. In
+my previous experiments with GitLab runners, the idea of having control over
+the VM size for building was very appealing, but having to either pay for this
 machine full time or develop complex behavior for starting and stopping the
 machine was daunting.
 
@@ -224,15 +223,16 @@ builds, and only pay a few cents per build (much cheaper than many CICD
 services). Finally, Elastic Container Registry (ECR) was an obvious choice for
 container hosting, with simple integration with EKS, default-private
 repositories, and immutable image tags. I know this sounds like an AWS ad, but
-I expect other cloud providers will catch up eventually. Azure DevOps seems
-like an obvious candidate for a premium GitHub Actions option.
+I expect other cloud providers will catch up eventually if they have not
+already. Azure DevOps seems like an obvious candidate for a premium GitHub
+Actions option.
 
 This diagram provides a nice overview of my workflow:
 
 ![Pipeline](/pipeline.svg)
 
 1. I typically run tests and lints locally, and then push to a development
-   branch. I create a pull request for the purposes of self-code review. I then
+   branch. I create a pull request for the purposes of code self-review. I then
    merge to `main`.
 1. GitHub invokes a webhook to CodeBuild to notify it of the new commit to
    `main`.
@@ -241,7 +241,7 @@ This diagram provides a nice overview of my workflow:
 1. The instance pulls Docker images for caching from ECR.
 1. The build script runs rustfmt, clippy, tests, doctests, and then finally
    builds a release binary and Docker image.
-1. The image artifact and cache images are pushed to ECR.
+1. The runtime and cache images are pushed to ECR.
 1. I manually trigger Terraform to update the images specified in Kubernetes
    Deployments.
 1. EKS performs a rolling update of my Deployments, pulling the new image from
@@ -262,11 +262,11 @@ pipeline for validation only, and have the results sent back to GitHub for
 display in the pull request page.
 
 As mentioned above, I would also like to explore automated benchmarking within
-my pipeline, with proper caching of previous results to detect regressions. 
-This has the advantage that benchmarks will be conducted on a consistently 
+my pipeline, with proper caching of previous results to detect regressions.
+This has the advantage that benchmarks will be conducted on a consistently
 sized machine with little else running on it. Ideally these results could
-be inserted directly into pull requests to document any regressions or 
-improvements.  
+be inserted directly into pull requests to document any regressions or
+improvements.
 
 ## Conclusion
 
