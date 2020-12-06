@@ -171,7 +171,7 @@ script, and then pulling, patching, and pushing can be automated with a Bash
 script. If you do need to migrate platforms for some reason, this process can
 take just a few hours when combined with Terraform.
 
-## Automated Rust Code Validation
+## Rust Continuous Integration
 
 I employ a number of steps for validating my Rust code. These are not
 revolutionary, but I will include them here for those that are not aware.

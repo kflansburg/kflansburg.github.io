@@ -64,7 +64,7 @@ most recent solution in detail."/>
 			<h1>Rust Continuous Delivery</h1>
                         
    			<b><time>26.11.2020</time></b>
-   			<span>-- 2277 Words</span><br/>
+   			<span>-- 2276 Words</span><br/>
 		       
 		           <a href="/tags/aws/">AWS</a>
         	       
@@ -165,7 +165,7 @@ better.</p>
 </span><span class="err">
 </span><span class="err"></span><span class="c"># Build Run</span><span class="err">
 </span><span class="err"></span><span class="k">FROM</span><span class="s"> debian:stable-slim AS run</span><span class="err">
-</span><span class="err"></span><span class="k">COPY</span> --from<span class="o">=</span>builder /build/app/target/release/app app<span class="err">
+</span><span class="err"></span><span class="k">COPY</span> --from<span class="o">=</span>build /build/app/target/release/app app<span class="err">
 </span><span class="err"></span><span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="s2">&#34;./app&#34;</span><span class="p">]</span><span class="err">
 </span></code></pre></td></tr></table>
 </div>
@@ -260,7 +260,7 @@ This means that migrating between platforms involves updating and testing <em>on
 script, and then pulling, patching, and pushing can be automated with a Bash
 script. If you do need to migrate platforms for some reason, this process can
 take just a few hours when combined with Terraform.</p>
-<h2 id="automated-rust-code-validation">Automated Rust Code Validation</h2>
+<h2 id="rust-continuous-integration">Rust Continuous Integration</h2>
 <p>I employ a number of steps for validating my Rust code. These are not
 revolutionary, but I will include them here for those that are not aware.</p>
 <ol>
