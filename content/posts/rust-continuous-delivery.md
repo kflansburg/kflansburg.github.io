@@ -86,7 +86,7 @@ RUN cargo build --release
 
 # Build Run
 FROM debian:stable-slim AS run
-COPY --from=builder /build/app/target/release/app app
+COPY --from=build /build/app/target/release/app app
 ENTRYPOINT ["./app"]
 ```
 
