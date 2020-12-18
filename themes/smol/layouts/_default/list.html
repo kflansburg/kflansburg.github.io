@@ -1,26 +1,69 @@
 {{ define "main" }}
-	<main>
-		{{ $listtitle := .Title }}
-		{{ if or .Title .Content }}
-		<div>
-			{{ with .Title }}<h1>{{ . }}</h1>{{ end }}
-			{{ with .Content }}<div>{{ . }}</div>{{ end }}
-		</div>
-		{{ end }}
-		
-		<ul>
-		    {{ range .Paginator.Pages }}
-		    <li>
-		        <div class="post-title">
-				{{ if eq $listtitle "Posts" }}
-				    {{ .Date.Format (default "2006-01-02 15:04:05" .Site.Params.dateFmt) }} <a href="{{ .RelPermalink }}">{{.Title }}</a>
-				{{ else }}
-				    <a href="{{ .RelPermalink }}">{{.Title }}</a>
-				{{ end }}
-		        </div>
-		    </li>
-		    {{ end }}
-		</ul>
-		{{ partial "pagination.html" . }}
-	</main>
+    <main>
+        {{ $listtitle := .Title }}
+        {{ if or .Title .Content }}
+        <div>
+            {{ with .Title }}<h1>{{ . }}</h1>{{ end }}
+            {{ with .Content }}<div>{{ . }}</div>{{ end }}
+        </div>
+        {{ end }}
+        
+        <ul>
+            {{ $series := dict }}
+            {{ $serieskeys := slice }}
+            {{ range $key, $val := .Site.Taxonomies.series }}
+                {{ $series = merge $series (dict $val.Page.Title $key) }}
+                {{ $serieskeys = append $serieskeys (slice $val.Page.Title) }}
+            {{ end }}
+            {{ if eq $listtitle "Posts" }}
+                {{ range .Paginator.Pages.ByDate.Reverse }}
+                    <li>
+                        <div class="post-title">
+                            {{ .Date.Format (default "2006-01-02 15:04:05" .Site.Params.dateFmt) }} 
+                            {{ if .Params.series }} 
+                                <a href="/series/{{ index $series (index .Params.series 0) }}/">{{ index .Params.series 0 }}</a> | 
+                            {{ end }}
+                            <a href="{{ .RelPermalink }}">
+                                {{ .Title }}
+                            </a>
+                        </div>
+                    </li>
+                {{ end }}
+            {{ else if in (slice "Tags" "Series") $listtitle }}
+                {{ range .Paginator.Pages.ByTitle }}
+                    <li>
+                        <div class="post-title">
+                            <a href="{{ .RelPermalink }}">
+                                {{ .Title }}
+                            </a>
+                        </div>
+                    </li>
+                {{ end }}
+            {{ else if in $serieskeys $listtitle }}
+                {{ range .Paginator.Pages.ByDate }}
+                    <li>
+                        <div class="post-title">
+                            <a href="{{ .RelPermalink }}">
+                                {{ .Title }}
+                            </a>
+                        </div>
+                    </li>
+                {{ end }}
+            {{ else }}
+                {{ range .Paginator.Pages.ByDate.Reverse }}
+                    <li>
+                        <div class="post-title">
+                            {{ if .Params.series }} 
+                                <a href="/series/{{ index $series (index .Params.series 0) }}/">{{ index .Params.series 0 }}</a> | 
+                            {{ end }}
+                            <a href="{{ .RelPermalink }}">
+                                {{ .Title }}
+                            </a>
+                        </div>
+                    </li>
+                {{ end }}
+            {{ end }}
+        </ul>
+        {{ partial "pagination.html" . }}
+    </main>
 {{ end }}

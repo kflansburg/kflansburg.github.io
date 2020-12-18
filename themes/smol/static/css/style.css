@@ -15,11 +15,20 @@ html {
 
 body {
     font-family: 'monospace'; 
-    max-width: 800px;
-    margin: 40px auto;
+    margin: 40px 40px;
     padding: 0 10px;
     font: 14px/1.5 monospace;
     color: #444
+}
+
+.links {
+    text-align: center;
+    white-space: nowrap;
+}
+
+main {
+    max-width: 550px;
+    margin: auto;
 }
 
 h1,h2,h3 {
@@ -30,7 +39,8 @@ p > code, li > code {
     font: 14px/1.5 monospace;
     color: #444;
     background: #eee;
-    padding: 2px;
+    padding-right: 3px;
+    padding-left: 3px;
     display: inline-block;
 }
 
@@ -72,6 +82,7 @@ article {
     font-family: 'Averia Serif Libre';
 }
 
+
 article > h1 {
     font-size: 2em;
 }
@@ -106,17 +117,19 @@ figure {
 
 @media (min-width: 992px) {
     figure {
-        margin-left: -17%;
-        margin-right: -17%;
+        margin-left: -220px;
+        margin-right: -220px;
     }
 
     .highlight {
-        margin-left: -17%;
-        margin-right: -17%;
+        margin-left: -220px;
+        margin-right: -220px;
     }
-    
+ 
+/*
     article {
         margin-left: 17%;
         margin-right: 17%;
     }
+*/
 }

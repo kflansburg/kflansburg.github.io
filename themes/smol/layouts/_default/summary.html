@@ -1,9 +1,20 @@
 <article>
-	<h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+	<h2>
+            {{ $series := dict }}
+            {{ range $key, $val := .Site.Taxonomies.series }}
+                {{ $series = merge $series (dict $val.Page.Title $key) }}
+            {{ end }}
+            {{ if .Params.series }} 
+                <a href="/series/{{ index $series (index .Params.series 0) }}/">{{ index .Params.series 0 }}</a> | 
+            {{ end }}
+            <a href="{{ .Permalink }}">
+                {{ .Title }}
+            </a>
+        </h2>
 	<b><time>{{ .Date.Format (default "2006-01-02 15:04:05" .Site.Params.dateFmt) }}</time></b>
         <span>-- {{ .Content | countwords }} Words</span><br/>
 	{{ range .Params.tags }}
-	<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}/">{{ . }}</a>
+	<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}/">{{ . }},</a>
 	{{ end }}
 	<div>
 		{{ .Summary }}

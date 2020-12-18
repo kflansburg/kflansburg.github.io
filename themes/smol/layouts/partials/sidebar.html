@@ -1,14 +1,46 @@
+{{ $series := dict }}
+{{ range $key, $val := .Site.Taxonomies.series }}
+    {{ $series = merge $series (dict $val.Page.Title $key) }}
+{{ end }}
 <aside>
-	<div>
-		<div>
-			<h3>LATEST POSTS</h3>
-		</div>
-		<div>
-			<ul>
-				{{ range first 5 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
-				<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-				{{ end }}
-			</ul>
-		</div>
-	</div>
+    <div>
+        {{ if .Params.series }}
+            {{ $name := index .Params.series 0 }}
+            <hr/>
+            <p><a href="" id="series"></a>This is a post in the <b>{{$name}}</b> series.<br/> Other posts in this series:</p>
+        
+            {{ $name := $name | urlize }}
+            {{ $series := index .Site.Taxonomies.series $name }}
+            {{ $page := .Title }}
+            <ul class="series">
+                {{ range $series.Pages.ByDate }}
+                    <li>
+                        {{ if eq $page .Title }}
+                            {{ .LinkTitle }}
+                        {{ else }}
+                            <a href="{{.Permalink}}">{{.LinkTitle}}</a>
+                        {{ end }}
+                    </li>
+                {{end}}
+            </ul>
+        {{ else }}
+            <div>
+            <h3>LATEST POSTS</h3>
+            </div>
+            <div>
+            <ul>
+            {{ range first 5 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
+                <li>
+                    {{ if .Params.series }} 
+                        <a href="/series/{{ index $series (index .Params.series 0) }}/">{{ index .Params.series 0 }}</a> | 
+                    {{ end }}
+                    <a href="{{ .RelPermalink }}">
+                        {{ .Title }}
+                    </a>
+                </li>
+            {{ end }}
+            </ul>
+            </div>
+        {{ end }}
+    </div>
 </aside>
