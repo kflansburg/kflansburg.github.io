@@ -6,6 +6,16 @@
     <description>Recent content in Series on kflansburg.com</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>Kevin Flansburg</copyright><atom:link href="https://kflansburg.com/series/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Kevin Flansburg</copyright>
+    <lastBuildDate>Fri, 18 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ordered Stateful Streaming</title>
+      <link>https://kflansburg.com/series/ordered-stateful-streaming/</link>
+      <pubDate>Fri, 18 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/series/ordered-stateful-streaming/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

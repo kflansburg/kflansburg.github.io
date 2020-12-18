@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scala on kflansburg.com</title>
+    <link>https://kflansburg.com/tags/scala/</link>
+    <description>Recent content in Scala on kflansburg.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Kevin Flansburg</copyright>
+    <lastBuildDate>Fri, 18 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Introduction</title>
+      <link>https://kflansburg.com/posts/ordered-stateful-streaming/introduction/</link>
+      <pubDate>Fri, 18 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/introduction/</guid>
+      <description>&lt;p&gt;I recently spent two weeks tracking down a subtle bug in a Spark Structured
+Streaming application which I have been maintaining for several years. Having
+dealt with many such time-consuming bugs over the years, I&amp;rsquo;ve decided to
+compile my experiences working with ordered, stateful streaming applications
+into a series of posts. This series will serve as an introductory guide to the
+design and operation of stateful streaming pipelines, and hopefully spur some
+further development to simplify this process in the future.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
