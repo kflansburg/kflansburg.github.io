@@ -36,8 +36,10 @@ proved quite time-consuming to resolve.
 I personally find dependency management in Spark and Java to be unnecessarily
 complex. This is caused by a number of factors:
 
-- Hadoop and Spark have introduced a lot of features in recent releases, and
-  documentation often does not indicate what version they were introduced in.
+- Hadoop and Spark have introduced a lot of features in recent releases and
+  it can be very difficult to determine if features and APIs described in
+  recent documentation and guides were introduced before or after the specific
+  version you are using.
 - Many users are operating on vendored clusters which provide older
   versions of these packages. In addition, many vendors provide *forked*
   versions of these packages which do not match the official documentation.
@@ -54,7 +56,8 @@ The simplest path for specifying custom dependencies, using `--packages` with
 
 Unfortunately, this does not integrate very well with a modern development
 process where a sophisticated package manager handles version resolution for
-you. I'd like to share a checklist below that I typically go through when
+you, and potentially bypasses the type checking performed when you compiled
+your code. I'd like to share a checklist below that I typically go through when
 something isn't working.
 
 #### Clearly Identify Cluster Package Versions
@@ -183,22 +186,11 @@ straightforward. An important factor here becomes reliably notifying a human
 when the job fails. Unfortunately this can be difficult to integrate with
 Spark, and most of my solutions have involved terrible Bash scripts.
 
-Spark's recovery mechanism is not 100% bulletproof, and when it does fail you
-tend to find yourself in a pickle because the correctness guarantees in the
-application become your enemy when checkpoint data and output data no longer
-agree. Structured Streaming makes it clear that S3 is not a valid location to
-store checkpoint data, because it does not provide the consistency guarantees
-that a real filesystem does. What I have found, though, is that Spark appears
-to still insist on storing some metadata in S3 and uses this in combination
-with the actual checkpoint to recover the job, preventing you from fully
-avoiding these consistency issues. In particular, Spark appears to look at
-"batch" numbers within the S3 metadata and skip batches which have already
-"occurred", which semantically makes no sense because batch numbers are
-meaningless and will not contain the same offsets from job to job. Luckily
-this appears to be rare, and I've managed to mostly avoid it, but I consider it
-to be a bug.
-
-A general process that I've developed for repairing issues like this is:
+Spark's recovery mechanism is not always perfect. When it does fail it can
+be very difficult to recover from because the correctness guarantees in the
+application work against you when your checkpoint data and output data no
+longer agree. A general process that I've developed for repairing issues like
+this is:
 
 1. Include offsets in output data.
 1. When a failure occurs, identify the offset of the last state-of-the-world
@@ -209,6 +201,20 @@ A general process that I've developed for repairing issues like this is:
 1. Back up and then delete checkpoint data (both HDFS and S3) for the streaming
    job.
 1. Start your new streaming session.
+
+A specific issue that I've run into a number of times is with output Parquet
+metadata stored in S3. Structured Streaming makes it clear that S3 is not a
+valid location to store checkpoint data, because it does not provide the
+consistency guarantees that a real filesystem does. What I have found, though,
+is that Spark appears to still insist on storing some metadata in S3 and uses
+this in combination with the actual checkpoint to store job state, preventing
+you from fully avoiding these consistency issues.
+
+In particular, Spark appears to look at "batch" numbers within the S3 metadata
+and skip batches which have already "occurred", which semantically makes no
+sense because batch numbers are meaningless and will not contain the same
+offsets from job to job. Luckily this appears to be rare, and I've managed to
+mostly avoid it, but I consider it to be a bug.
 
 ## Migrating from Vendored Solution to Kubernetes
 

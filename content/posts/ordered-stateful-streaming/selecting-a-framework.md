@@ -31,7 +31,7 @@ into streaming applications, particularly stateful ones. What seems like a
 straightforward use-case results in a laundry list of complex requirements. At
 the time, the use of Kafka and Parquet meant that I would likely need to use an
 Apache project framework. The main frameworks I recall looking into were Kafka
-Streams, Samza, Flink, and Spark.
+Streams, Samza, Flink, and Spark (which I eventually selected).
 
 ### Kafka Streams
 
@@ -113,15 +113,22 @@ transformation is strongly typed end-to-end.
 #### Scalable and Mature
 
 Spark is certainly a mature project: it is under active development, widely
-used, and supported by a number of vendors. Structured Streaming, however, is
-a somewhat new feature and is in fact
-[not the first attempt](https://spark.apache.org/docs/latest/streaming-programming-guide.html)
-at stream handling in Spark. Spark is undeniably scalable, and there is a lot
-of documentation on configuration and tuning of Spark clusters for scalability.
-Indeed, my own previous expertise with administering Spark clusters biased my
-decision here.
+used, and supported by a number of vendors. Spark is undeniably scalable, and
+there is a lot of documentation on configuration and tuning of Spark clusters
+for scalability. Indeed, my own previous expertise with administering Spark
+clusters biased my decision here.
 
-There is some  opaqueness, however, surrounding the behavior and parallelism
+Structured Streaming is a somewhat new feature and is in fact not the first
+attempt at stream handling in Spark. The older
+[DStreams API](https://spark.apache.org/docs/latest/streaming-programming-guide.html)
+does not support the `Dataset` API, appears to have weaker end-to-end integrity
+guarantees, and no longer appears to be the main focus of development. It does,
+however, have its own stateful transformation support, introduced in Spark 1.6,
+and appears to support much more granular control of parallelism when consuming
+Kafka partitions. I decided to focus my investigation on the newer Structured
+Streaming API.
+
+There is some  opaqueness surrounding the behavior and parallelism
 that Structured Streaming itself uses, but I was relatively confident that I
 would be able to horizontally scale my job. I was also interested in the
 ability to do large-scale, non-streaming analytics downstream from state
@@ -212,7 +219,7 @@ application state each time progress is made.
 #### Final Design
 
 In the end, I wrote the following query in Scala. I packaged this query as a
-fat JAR using [sbt assmebly](https://github.com/sbt/sbt-assembly), and
+fat JAR using [sbt assembly](https://github.com/sbt/sbt-assembly), and
 [deployed it on AWS EMR](https://aws.amazon.com/blogs/big-data/submitting-user-applications-with-spark-submit/).
 
 ```scala
@@ -265,12 +272,6 @@ my options. I have identified a few things that I think I may have overlooked:
 - Kafka Streams was clearly the most tightly coupled with the Kafka API
   contract. As we will see in future posts, it may have been a better option
   despite its limitations because of how much I was depending on this behavior.
-- I pretty much ignored Spark's older DStreams API. I do not think that it
-  would have been a better choice, because it does not support the `Dataset`
-  API, appears to have weaker end-to-end guarantees, and no longer appears to
-  be the main focus of development. It does, however, have its own stateful
-  transformation support, introduced in Spark 1.6, and appears to support much
-  more granular control of parallelism when consuming Kafka partitions.
 - Samza has reached `1.0`, but the project has not addressed many of my
   concerns. I believe that their vision for stream processing is very focused,
   which is not a bad thing, but may be incompatible with my needs.

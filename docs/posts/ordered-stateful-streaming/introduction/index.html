@@ -72,7 +72,7 @@ further development to simplify this process in the future."/>
 
             
                 <b><time>2020-12-18</time></b>
-                <span>-- 1770 Words</span>
+                <span>-- 1792 Words</span>
                 <br/>
                 
                     <a href="/tags/spark/">Spark,</a>
@@ -92,14 +92,14 @@ into a series of posts. This series will serve as an introductory guide to the
 design and operation of stateful streaming pipelines, and hopefully spur some
 further development to simplify this process in the future.</p>
 <h2 id="overview">Overview</h2>
-<p>There are several different classes of stream processing applications, each
-with different constraints on how messages are processed. This can have a
-significant impact on parallelism and application complexity. In this series,
-I will primarily focus on what I consider to be the most rigorous class of
-stream processing application: an arbitrary, stateful transformation is applied
-to messages exactly in order and without skipping messages. In this post I
-will describe the types of processing that lead to these constraints, and
-outline detailed requirements for such an application.</p>
+<p>There are <a href="#stream-integrity">several different classes</a> of stream processing
+applications, each with different constraints on how messages are processed.
+This can have a significant impact on parallelism and application complexity.
+In this series, I will primarily focus on what I consider to be the most
+rigorous class of stream processing application: an arbitrary, stateful
+transformation is applied to messages exactly in order and without skipping
+messages. In this post I will describe the types of processing that lead to
+these constraints, and outline detailed requirements for such an application.</p>
 <h2 id="use-case">Use Case</h2>
 <p>Let&rsquo;s say that you want to stream updates from a constantly changing set
 of sensors. Each sensor produces a table of data containing hundreds of rows or
@@ -156,24 +156,25 @@ hurdle of complexity to support reliable streaming, and younger frameworks may
 still be perfecting this.</p>
 <h3 id="scalability">Scalability</h3>
 <p>Scalability in the context of streaming means that a framework can distribute
-tasks across nodes to the same degree that Kafka (or whatever message broker
-you select) can. Data engineers ideally take a lot of care to select a keying
-pattern to maximize parallelism within their message brokering system. When
-done correctly, this can allow these systems to scale quite well and handle
-enormous total throughput. A streaming application should be able to match this
-parallelism and dynamically schedule tasks across multiple nodes as partitions
-are created and expire.</p>
+message processing tasks across nodes to the same degree that Kafka (or
+whatever message broker you select) can. Data engineers ideally take a lot of
+care to select a keying pattern to maximize parallelism within their message
+brokering system. When done correctly, this can allow these systems to scale
+quite well and handle enormous total throughput. A streaming application should
+be able to match this parallelism and dynamically schedule tasks across
+multiple nodes as partitions are created and expire.</p>
 <h3 id="topic-discovery">Topic Discovery</h3>
 <p>Streaming data is frequently distributed across many topics. Given that topics
-can already be partitioned, I believe that this should primarily be done for
-ergonomics. For instance, if a human wants to view all messages from a given
-source, they should be able to consume a single topic without having to filter
-out messages from other sources. To support an ever-changing set of data
-sources, frameworks should periodically detect new topics (and prune inactive
-topics).</p>
+can already be partitioned, I believe that partitioning messages with the same
+schema across multiple topics should primarily be done for ergonomics. For
+instance, if a human wants to view all messages from a given source, they
+should be able to consume a single topic without having to filter out messages
+from other sources. To support an ever-changing set of data sources, frameworks
+should periodically detect new topics (and prune inactive topics).</p>
 <h3 id="stream-integrity">Stream Integrity</h3>
-<p>As mentioned above, there are several classes of integrity requirements which I
-believe any framework should support. Each one has different implications for
+<p>As mentioned above, there are several classes of stream processing
+applications, each with different integrity requirements, which I believe any
+framework should support. These requirements have different implications for
 parallelization. When a loss of integrity occurs outside of the framework&rsquo;s
 control (from Kafka or the Producer), the job should fail as it will begin
 producing invalid and undefined messages itself. Here is a rough outline of
@@ -206,8 +207,11 @@ reliably recover from application restarts becomes more critical. Even in
 stateless applications the framework needs to track messages consumed closely
 in order to prevent reprocessing and retransmission of messages. In stateful
 applications, the framework must also periodically create checkpoints of the
-user-defined state. State should be recorded to a reliable storage medium
-(HDFS is common), and care must be taken to ensure the integrity of this data
+user-defined state. State checkpoints should be recorded to
+<a href="https://cloud.google.com/storage/docs/consistency">strongly consistent</a>
+distributed storage (HDFS is common, S3
+<a href="https://aws.amazon.com/blogs/aws/amazon-s3-update-strong-read-after-write-consistency/">only recently</a>
+achieved this). Care must also be taken to ensure the integrity of this data
 and avoid race conditions between checkpoint data and output data from the
 job.</p>
 <h3 id="sink-to-popular-formats-and-locations">Sink to Popular Formats and Locations</h3>

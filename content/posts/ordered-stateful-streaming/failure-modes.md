@@ -34,16 +34,16 @@ reach an agreement with data consumers regarding the level of service and the
 cost implications thereof. In this post I will outline the major sources of
 failure that I have encountered, in order of increasing severity.
 
-## Environmental Failures
+### Environmental Failures
 
 I define environmental failures as anything that causes a task failure that is
-unrelated to the data being processed or the job code itself. My memory issues
+unrelated to the data being processed or the job code itself. Memory issues
 are an example of this, where settings can simply be adjusted and the task
 restarted. Another example might be a Pod eviction on Kubernetes triggered by
 the cluster autoscaler. The insight here is that these are in general the only
 types of failures which snapshot and recovery saves us from.
 
-## Data Integrity Failures
+### Data Integrity Failures
 
 Data integrity errors include malformed checkpoints or malformed Kafka topic
 contents (typically caused by a bug in the producer) which prevent the
@@ -54,7 +54,7 @@ full snapshots at a fixed interval to establish an upper bound on data loss.
 Depending on the size of your session state, this could be as frequently as one
 to five minutes.
 
-## Kafka Data Loss
+### Kafka Data Loss
 
 Loss of Kafka data due to a failure in its underlying storage can result in a
 full loss of unprocessed partition data. If your pipeline is running and caught
@@ -69,14 +69,14 @@ recommend using multi-zone topic replication to avoid it as much as possible.
 Additionally, scripting and testing this recovery process can significantly
 reduce downtime in the event that such a failure cannot be avoided.
 
-## Full Reprocessing of Historical Data
+### Full Reprocessing of Historical Data
 
 There are a few failures that could require you to reprocess the full topic
 history from Kafka. A simple example would be loss of output data due to a
 failure in object storage. This is extremely unlikely, however, and can be
 mitigated with cross-regional replication. Much more likely would be a bug in
 the business logic of your stream processing job which invalidates your output
-data. This is usually a disaster, because most organizations do not want to
+data. This is usually a disaster because most organizations do not want to
 retain Kafka records forever, and even if they did, reprocessing that many
 records will be time-consuming and expensive. I recommend a number of
 considerations here:

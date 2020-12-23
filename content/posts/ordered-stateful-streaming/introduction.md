@@ -27,14 +27,14 @@ further development to simplify this process in the future.
 
 ## Overview
 
-There are several different classes of stream processing applications, each
-with different constraints on how messages are processed. This can have a
-significant impact on parallelism and application complexity. In this series,
-I will primarily focus on what I consider to be the most rigorous class of
-stream processing application: an arbitrary, stateful transformation is applied
-to messages exactly in order and without skipping messages. In this post I
-will describe the types of processing that lead to these constraints, and
-outline detailed requirements for such an application.
+There are [several different classes](#stream-integrity) of stream processing
+applications, each with different constraints on how messages are processed.
+This can have a significant impact on parallelism and application complexity.
+In this series, I will primarily focus on what I consider to be the most
+rigorous class of stream processing application: an arbitrary, stateful
+transformation is applied to messages exactly in order and without skipping
+messages. In this post I will describe the types of processing that lead to
+these constraints, and outline detailed requirements for such an application.
 
 ## Use Case
 
@@ -99,28 +99,29 @@ still be perfecting this.
 ### Scalability
 
 Scalability in the context of streaming means that a framework can distribute
-tasks across nodes to the same degree that Kafka (or whatever message broker
-you select) can. Data engineers ideally take a lot of care to select a keying
-pattern to maximize parallelism within their message brokering system. When
-done correctly, this can allow these systems to scale quite well and handle
-enormous total throughput. A streaming application should be able to match this
-parallelism and dynamically schedule tasks across multiple nodes as partitions
-are created and expire.
+message processing tasks across nodes to the same degree that Kafka (or
+whatever message broker you select) can. Data engineers ideally take a lot of
+care to select a keying pattern to maximize parallelism within their message
+brokering system. When done correctly, this can allow these systems to scale
+quite well and handle enormous total throughput. A streaming application should
+be able to match this parallelism and dynamically schedule tasks across
+multiple nodes as partitions are created and expire.
 
 ### Topic Discovery
 
 Streaming data is frequently distributed across many topics. Given that topics
-can already be partitioned, I believe that this should primarily be done for
-ergonomics. For instance, if a human wants to view all messages from a given
-source, they should be able to consume a single topic without having to filter
-out messages from other sources. To support an ever-changing set of data
-sources, frameworks should periodically detect new topics (and prune inactive
-topics).
+can already be partitioned, I believe that partitioning messages with the same
+schema across multiple topics should primarily be done for ergonomics. For
+instance, if a human wants to view all messages from a given source, they
+should be able to consume a single topic without having to filter out messages
+from other sources. To support an ever-changing set of data sources, frameworks
+should periodically detect new topics (and prune inactive topics).
 
 ### Stream Integrity
 
-As mentioned above, there are several classes of integrity requirements which I
-believe any framework should support. Each one has different implications for
+As mentioned above, there are several classes of stream processing
+applications, each with different integrity requirements, which I believe any
+framework should support. These requirements have different implications for
 parallelization. When a loss of integrity occurs outside of the framework's
 control (from Kafka or the Producer), the job should fail as it will begin
 producing invalid and undefined messages itself. Here is a rough outline of
@@ -156,8 +157,11 @@ reliably recover from application restarts becomes more critical. Even in
 stateless applications the framework needs to track messages consumed closely
 in order to prevent reprocessing and retransmission of messages. In stateful
 applications, the framework must also periodically create checkpoints of the
-user-defined state. State should be recorded to a reliable storage medium
-(HDFS is common), and care must be taken to ensure the integrity of this data
+user-defined state. State checkpoints should be recorded to
+[strongly consistent](https://cloud.google.com/storage/docs/consistency)
+distributed storage (HDFS is common, S3
+[only recently](https://aws.amazon.com/blogs/aws/amazon-s3-update-strong-read-after-write-consistency/)
+achieved this). Care must also be taken to ensure the integrity of this data
 and avoid race conditions between checkpoint data and output data from the
 job.
 
