@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
+	<title>Selecting a Framework</title>
+        <meta property="og:title" content="Selecting a Framework" />
+<meta property="og:description" content="In the second post of this series I explore the strengths and weaknesses of
+several popular streaming frameworks. This analysis was performed a couple of
+years ago with a particular application in mind. These frameworks have since
+improved, but this post should provide some insight into the tradeoffs and
+decisions involved when designing streaming applications, and lessons can be
+learned from choices that did and did not pay off." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/" />
+<meta property="og:image" content="https://kflansburg.com/profile.jpg"/>
+<meta property="article:published_time" content="2021-01-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-01-18T00:00:00+00:00" />
+
+
+        <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
+
+<meta name="twitter:title" content="Selecting a Framework"/>
+<meta name="twitter:description" content="In the second post of this series I explore the strengths and weaknesses of
+several popular streaming frameworks. This analysis was performed a couple of
+years ago with a particular application in mind. These frameworks have since
+improved, but this post should provide some insight into the tradeoffs and
+decisions involved when designing streaming applications, and lessons can be
+learned from choices that did and did not pay off."/>
+
+	<meta name="description" content="Discussions on Rust, Kubernetes, and more.">
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+    <div>
+    
+    <a href="https://kflansburg.com/">kflansburg.com</a>
+    
+    
+    <div style="text-align: right;">Discussions on Rust, Kubernetes, and more.</div>
+    </div>
+    <nav class='links'>
+        
+            |
+            
+            <a href="/posts/"><b>Posts</b></a> |
+        
+            <a href="/tags/"><b>Tags</b></a> |
+        
+            <a href="/series/"><b>Series</b></a> |
+        
+    </nav>
+    
+</header>
+
+	
+    <main>
+        <article>
+             
+                <h1>Ordered Stateful Streaming: <br />Selecting a Framework</h1>
+            
+
+            
+                <b><time>2021-01-18</time></b>
+                <span>-- 2011 Words</span>
+                <br/>
+                
+                    <a href="/tags/spark/">Spark,</a>
+                
+                    <a href="/tags/streaming/">Streaming,</a>
+                
+                    <a href="/tags/scala/">Scala,</a>
+                
+            
+            <div>
+                
+                <p>In the second post of this series I explore the strengths and weaknesses of
+several popular streaming frameworks. This analysis was performed a couple of
+years ago with a particular application in mind. These frameworks have since
+improved, but this post should provide some insight into the tradeoffs and
+decisions involved when designing streaming applications, and lessons can be
+learned from choices that did and did not pay off.</p>
+<h2 id="selecting-a-framework">Selecting a Framework</h2>
+<p>As was made clear in the previous post, there is a lot of complexity that goes
+into streaming applications, particularly stateful ones. What seems like a
+straightforward use-case results in a laundry list of complex requirements. At
+the time, the use of Kafka and Parquet meant that I would likely need to use an
+Apache project framework. The main frameworks I recall looking into were Kafka
+Streams, Samza, Flink, and Spark (which I eventually selected).</p>
+<h3 id="kafka-streams">Kafka Streams</h3>
+<p>Kafka Streams is appealing because it offers tight integration with the Kafka
+API. Specifically, it launches one stateful task per Kafka partition, which
+consumes messages in order from that partition. Parallelism is controlled by
+the number of partitions used. This exactly matches the behavior I desired in
+the previous post. Streams also has first-class support for aggregating a
+stream of updates as its
+<a href="https://dl.acm.org/doi/10.1145/3242153.3242155">table dual</a>.</p>
+<p>There were, however, a number of items which concerned me. First, Kafka Streams
+features a very flexible deployment model, but at the time I was not interested
+in manually configuring Yarn or Kubernetes to deploy my application. Second, it
+is highly Kafka-specific and, while I generally want to stick with a Kafkaesque
+API, I was not certain I wanted to use Kafka itself forever. Finally, Kafka
+Streams supports output to Kafka exclusively. This felt like a deal breaker
+because the output records of my application are quite large, making writing
+them out to Kafka cumbersome, and I would <em>still</em> need to run Spark or
+something similar to transform these records to Parquet.</p>
+<h3 id="apache-samza">Apache Samza</h3>
+<p>Apache Samza was a recent addition to Apache&rsquo;s catalog of stream processing
+frameworks. I liked that the documentation was
+<a href="https://samza.apache.org/learn/documentation/0.7.0/introduction/concepts.html">very clear</a>
+about the parallelism model used to consume Kafka messages. Like Streams,
+however, Samza does not appear to support Parquet output. Samza does support
+stateful operations, but state appears to be managed via an API, which would
+be very inconvenient for my application. Given that the project had not yet
+reached version <code>1.0</code>, I felt that it would not be a good choice for my
+pipeline.</p>
+<h3 id="apache-flink">Apache Flink</h3>
+<p>Apache Flink is perhaps the most ambitious of the streaming frameworks that I
+reviewed, with many novel features and the most flexible architecture. Flink
+offers
+<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.6/dev/stream/state/state.html">stateful transformations</a>
+which appear to support my use case via &ldquo;Raw&rdquo; Operator State. Examples of this
+use case were unfortunately hard to find, although this has
+<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/libs/state_processor_api.html#operator-state-1">since been improved</a>.
+I felt that, despite a plethora of advanced features, it was difficult to
+validate some of my basic requirements using Flink&rsquo;s documentation, and I
+decided that the framework was too immature. I chose not to go with Flink, but
+to keep an eye on the project for future work.</p>
+<h3 id="apache-spark">Apache Spark</h3>
+<p>In comparison, Spark, and in particular
+<a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html">Structured Streaming</a>
+which was new in Spark 2 and had recently introduced stateful transformations
+in Spark 2.3, had a very thorough documentation page which spoke directly to
+many of my concerns. It addressed topic auto-discovery, snapshot and recovery
+semantics, and of course Spark supports a broad range of output formats. It was
+clear that significant thought and engineering had gone into the critical
+pieces discussed in the remainder of this post.</p>
+<h4 id="strongly-typed">Strongly Typed</h4>
+<p>Spark can be developed in Java or Scala, giving the benefit of strong
+compile-time type checking. Many users use the <code>DataFrame</code> API, either
+explicitly or implicitly using Spark SQL queries. A <code>DataFrame</code> contains rows
+of type <code>Row</code>, which infers schema at runtime. This prevents the compiler from
+verifying that the transformations that you are applying are valid (i.e. that
+the columns exist and are of the correct type).</p>
+<p>It is possible, however, to operate on a <code>Dataset[T]</code>, where <code>T</code> is a
+first-class type. A <code>DataFrame</code> is actually equivalent to a <code>Dataset[Row]</code>. A
+distinction that is often overlooked (although is hardly a secret) by Spark
+developers is that of type-preserving vs. non-preserving transformations. These
+are listed separately in the
+<a href="https://spark.apache.org/docs/latest/api/scala/org/apache/spark/sql/Dataset.html">Scala documentation for Datasets</a>.
+In this documentation there are many methods on <code>Dataset[T]</code> which
+inadvertently return <code>Dataset[Row]</code> because they are unable to infer the output
+type. One must be careful to avoid these methods to ensure that your
+transformation is strongly typed end-to-end.</p>
+<h4 id="scalable-and-mature">Scalable and Mature</h4>
+<p>Spark is certainly a mature project: it is under active development, widely
+used, and supported by a number of vendors. Spark is undeniably scalable, and
+there is a lot of documentation on configuration and tuning of Spark clusters
+for scalability. Indeed, my own previous expertise with administering Spark
+clusters biased my decision here.</p>
+<p>Structured Streaming is a somewhat new feature and is in fact not the first
+attempt at stream handling in Spark. The older
+<a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html">DStreams API</a>
+does not support the <code>Dataset</code> API, appears to have weaker end-to-end integrity
+guarantees, and no longer appears to be the main focus of development. It does,
+however, have its own stateful transformation support, introduced in Spark 1.6,
+and appears to support much more granular control of parallelism when consuming
+Kafka partitions. I decided to focus my investigation on the newer Structured
+Streaming API.</p>
+<p>There is some  opaqueness surrounding the behavior and parallelism
+that Structured Streaming itself uses, but I was relatively confident that I
+would be able to horizontally scale my job. I was also interested in the
+ability to do large-scale, non-streaming analytics downstream from state
+reconstruction. Spark seemed to be the best option out of the three for
+integrating these workloads into a single cluster or even a single query.</p>
+<h4 id="stateful-transformations">Stateful Transformations</h4>
+<p>A major feature that Structured Streaming calls out is its support for
+arbitrary stateful transformations. I found this to be fairly flexible and
+easy to implement:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt" id="0"> 0
+</span><span class="lnt" id="1"> 1
+</span><span class="lnt" id="2"> 2
+</span><span class="lnt" id="3"> 3
+</span><span class="lnt" id="4"> 4
+</span><span class="lnt" id="5"> 5
+</span><span class="lnt" id="6"> 6
+</span><span class="lnt" id="7"> 7
+</span><span class="lnt" id="8"> 8
+</span><span class="lnt" id="9"> 9
+</span><span class="lnt" id="10">10
+</span><span class="lnt" id="11">11
+</span><span class="lnt" id="12">12
+</span><span class="lnt" id="13">13
+</span><span class="lnt" id="14">14
+</span><span class="lnt" id="15">15
+</span><span class="lnt" id="16">16
+</span><span class="lnt" id="17">17
+</span><span class="lnt" id="18">18
+</span><span class="lnt" id="19">19
+</span><span class="lnt" id="20">20
+</span><span class="lnt" id="21">21
+</span><span class="lnt" id="22">22
+</span><span class="lnt" id="23">23
+</span><span class="lnt" id="24">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">updateState</span><span class="o">(</span>
+    <span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+    <span class="n">inputs</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">KafkaMessage</span><span class="o">],</span>
+    <span class="n">oldState</span><span class="k">:</span> <span class="kt">GroupState</span><span class="o">[</span><span class="kt">MyStateType</span><span class="o">]</span>
+<span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">OutputRecord</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+   <span class="c1">// Expire groups (capture sessions) after timeout.
+</span><span class="c1"></span>   <span class="k">if</span> <span class="o">(</span><span class="n">oldState</span><span class="o">.</span><span class="n">hasTimedOut</span><span class="o">)</span> <span class="o">{</span>
+     <span class="n">oldState</span><span class="o">.</span><span class="n">remove</span><span class="o">()</span>
+     <span class="nc">Iterator</span><span class="o">()</span>
+   <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+       <span class="c1">// Initialize state on first call for the session, then retrieve state
+</span><span class="c1"></span>       <span class="c1">// from API on subsequent calls.
+</span><span class="c1"></span>       <span class="k">var</span> <span class="n">state</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">oldState</span><span class="o">.</span><span class="n">exists</span><span class="o">)</span> <span class="o">{</span>
+           <span class="n">oldState</span><span class="o">.</span><span class="n">get</span>
+       <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+           <span class="k">new</span> <span class="nc">MyStateType</span>
+       <span class="o">}</span>
+       <span class="c1">// Efficient Iterator over records in batch.
+</span><span class="c1"></span>       <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="n">handle_event</span><span class="o">);</span>
+       <span class="c1">// Update stored state and reset its timeout.
+</span><span class="c1"></span>       <span class="n">oldState</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">state</span><span class="o">)</span>
+       <span class="n">oldState</span><span class="o">.</span><span class="n">setTimeoutDuration</span><span class="o">(</span><span class="s">&#34;1 hour&#34;</span><span class="o">)</span>
+       <span class="n">result</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt" id="0">0
+</span><span class="lnt" id="1">1
+</span><span class="lnt" id="2">2
+</span><span class="lnt" id="3">3
+</span><span class="lnt" id="4">4
+</span><span class="lnt" id="5">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">query</span> <span class="k">=</span> <span class="n">df</span>
+    <span class="o">.</span><span class="n">groupByKey</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="n">key</span><span class="o">)</span>
+    <span class="o">.</span><span class="n">flatMapGroupsWithState</span><span class="o">(</span>
+        <span class="nc">OutputMode</span><span class="o">.</span><span class="nc">Append</span><span class="o">,</span>
+        <span class="nc">GroupStateTimeout</span><span class="o">.</span><span class="nc">ProcessingTimeTimeout</span>
+    <span class="o">)(</span><span class="n">updateState</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Notice, however, that there is one catch. The only option for this type of
+transformation is when using Spark&rsquo;s
+<a href="https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/streaming/GroupState.html">flatMapGroupsWithState</a>
+method on a <code>Dataset</code> that has been grouped by a key. This is frustrating for a
+few reasons. First, what if I don&rsquo;t want to group this operation? There appears
+to be no option to skip this step. Second, <code>groupByKey</code> is
+<a href="https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html">explicitly called out as something to avoid</a>
+in nearly every place it is mentioned online. This is because it performs a
+full shuffle of the data. In my case, the grouping was being done by Kafka key,
+so it seemed like it would <em>already be grouped</em> as it streams from the
+consumer.</p>
+<p>Structured Streaming appears to assume by default that you are trying to
+perform a join operation on topics, and that any grouping being done is
+unrelated to how messages are already grouped by topic and partition. I would
+argue that this is not a reasonable default. Furthermore, the parallelism model
+of your pipeline becomes unclear, because it is no longer necessarily based on
+the parallelism present in the Kafka source (until the <code>groupByKey</code>, Kafka
+partitions map 1:1 with Spark partitions). Sadly this appears to be unavoidable
+when doing stateful transformations whilst subscribing to multiple topics, and
+in particular when using topic discovery.</p>
+<h4 id="latency">Latency</h4>
+<p>One of the main limitations of Structured Streaming that is often
+discussed is that it operates on &ldquo;microbatches&rdquo;. In other words, it is
+not strictly speaking a streaming platform but instead periodically processes
+data in batches as (mostly) normal Spark queries. This suited me just fine,
+as I could adjust the batch interval to achieve the tradeoff between Parquet
+file size and latency that I desired. If latency is a critical focus of your
+application, I still believe that Structured Streaming is a solid solution with
+its
+<a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#continuous-processing">Continuous</a>
+trigger mode. I would also argue that periodically (every ~100ms) processing
+new messages in batches is <em>more</em> efficient than processing each message
+individually as it arrives, because there is some overhead in managing
+application state each time progress is made.</p>
+<h4 id="final-design">Final Design</h4>
+<p>In the end, I wrote the following query in Scala. I packaged this query as a
+fat JAR using <a href="https://github.com/sbt/sbt-assembly">sbt assembly</a>, and
+<a href="https://aws.amazon.com/blogs/big-data/submitting-user-applications-with-spark-submit/">deployed it on AWS EMR</a>.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt" id="0"> 0
+</span><span class="lnt" id="1"> 1
+</span><span class="lnt" id="2"> 2
+</span><span class="lnt" id="3"> 3
+</span><span class="lnt" id="4"> 4
+</span><span class="lnt" id="5"> 5
+</span><span class="lnt" id="6"> 6
+</span><span class="lnt" id="7"> 7
+</span><span class="lnt" id="8"> 8
+</span><span class="lnt" id="9"> 9
+</span><span class="lnt" id="10">10
+</span><span class="lnt" id="11">11
+</span><span class="lnt" id="12">12
+</span><span class="lnt" id="13">13
+</span><span class="lnt" id="14">14
+</span><span class="lnt" id="15">15
+</span><span class="lnt" id="16">16
+</span><span class="lnt" id="17">17
+</span><span class="lnt" id="18">18
+</span><span class="lnt" id="19">19
+</span><span class="lnt" id="20">20
+</span><span class="lnt" id="21">21
+</span><span class="lnt" id="22">22
+</span><span class="lnt" id="23">23
+</span><span class="lnt" id="24">24
+</span><span class="lnt" id="25">25
+</span><span class="lnt" id="26">26
+</span><span class="lnt" id="27">27
+</span><span class="lnt" id="28">28
+</span><span class="lnt" id="29">29
+</span><span class="lnt" id="30">30
+</span><span class="lnt" id="31">31
+</span><span class="lnt" id="32">32
+</span><span class="lnt" id="33">33
+</span><span class="lnt" id="34">34
+</span><span class="lnt" id="35">35
+</span><span class="lnt" id="36">36
+</span><span class="lnt" id="37">37
+</span><span class="lnt" id="38">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// Contruct a streaming dataset.
+</span><span class="c1"></span><span class="k">val</span> <span class="n">df</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">readStream</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="s">&#34;kafka&#34;</span><span class="o">)</span>
+  <span class="o">.</span><span class="n">option</span><span class="o">(</span><span class="s">&#34;kafka.bootstrap.servers&#34;</span><span class="o">,</span> <span class="n">args</span><span class="o">(</span><span class="mi">0</span><span class="o">))</span>
+  <span class="o">.</span><span class="n">option</span><span class="o">(</span><span class="s">&#34;subscribePattern&#34;</span><span class="o">,</span> <span class="s">&#34;my-topic-prefix-.+&#34;</span><span class="o">)</span>
+  <span class="c1">// Read from beginning
+</span><span class="c1"></span>  <span class="o">.</span><span class="n">option</span><span class="o">(</span><span class="s">&#34;startingOffsets&#34;</span><span class="o">,</span> <span class="s">&#34;earliest&#34;</span><span class="o">)</span>
+  <span class="c1">// Detect missing (expired) offsets
+</span><span class="c1"></span>  <span class="o">.</span><span class="n">option</span><span class="o">(</span><span class="s">&#34;failOnDataLoss&#34;</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+  <span class="o">.</span><span class="n">load</span><span class="o">();</span>
+
+<span class="c1">// Parse JSON payload and convert to strongly-typed `DataSet&lt;KafkaMessage&gt;`.
+</span><span class="c1">// Here `KafkaMessage` is a case class that I have defined, and I use a UDF
+</span><span class="c1">// to parse and validate the payload. Everything beyond this query is strongly
+</span><span class="c1">// types.
+</span><span class="c1"></span><span class="k">val</span> <span class="n">stream</span> <span class="k">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="o">(</span>
+      <span class="n">col</span><span class="o">(</span><span class="s">&#34;topic&#34;</span><span class="o">),</span>
+      <span class="n">col</span><span class="o">(</span><span class="s">&#34;partition&#34;</span><span class="o">),</span>
+      <span class="n">col</span><span class="o">(</span><span class="s">&#34;offset&#34;</span><span class="o">),</span>
+      <span class="n">col</span><span class="o">(</span><span class="s">&#34;key&#34;</span><span class="o">).</span><span class="n">as</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span>
+      <span class="nc">Parse</span><span class="o">.</span><span class="n">parse_json_udf</span><span class="o">(</span><span class="n">col</span><span class="o">(</span><span class="s">&#34;value&#34;</span><span class="o">).</span><span class="n">as</span><span class="o">[</span><span class="kt">String</span><span class="o">]).</span><span class="n">alias</span><span class="o">(</span><span class="s">&#34;value&#34;</span><span class="o">)</span>
+  <span class="o">).</span><span class="n">as</span><span class="o">[</span><span class="kt">KafkaMessage</span><span class="o">]</span>
+
+<span class="k">val</span> <span class="n">query</span> <span class="k">=</span> <span class="n">stream</span>
+    <span class="c1">// Process each session independently.
+</span><span class="c1"></span>   <span class="o">.</span><span class="n">groupByKey</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">key</span><span class="o">)</span>
+   <span class="c1">// Apply stateful transformation using a custom function `updateState`.
+</span><span class="c1"></span>   <span class="o">.</span><span class="n">flatMapGroupsWithState</span><span class="o">(</span>
+       <span class="nc">OutputMode</span><span class="o">.</span><span class="nc">Append</span><span class="o">,</span>
+       <span class="nc">GroupStateTimeout</span><span class="o">.</span><span class="nc">ProcessingTimeTimeout</span>
+   <span class="o">)(</span><span class="n">updateState</span><span class="o">)</span>
+   <span class="o">.</span><span class="n">writeStream</span>
+   <span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="s">&#34;parquet&#34;</span><span class="o">)</span>
+   <span class="o">.</span><span class="n">option</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">,</span> <span class="n">args</span><span class="o">(</span><span class="mi">2</span><span class="o">))</span>
+   <span class="o">.</span><span class="n">option</span><span class="o">(</span><span class="s">&#34;checkpointLocation&#34;</span><span class="o">,</span> <span class="n">args</span><span class="o">(</span><span class="mi">3</span><span class="o">))</span>
+   <span class="o">.</span><span class="n">partitionBy</span><span class="o">(...)</span>
+   <span class="o">.</span><span class="n">trigger</span><span class="o">(</span><span class="nc">Trigger</span><span class="o">.</span><span class="nc">ProcessingTime</span><span class="o">(</span><span class="s">&#34;15 minutes&#34;</span><span class="o">))</span>
+   <span class="o">.</span><span class="n">start</span><span class="o">()</span>
+
+<span class="n">query</span><span class="o">.</span><span class="n">awaitTermination</span><span class="o">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="looking-back">Looking Back</h2>
+<p>Looking back on these decisions, I believe I did a reasonable job of assessing
+my options. I have identified a few things that I think I may have overlooked:</p>
+<ul>
+<li>Kafka Streams was clearly the most tightly coupled with the Kafka API
+contract. As we will see in future posts, it may have been a better option
+despite its limitations because of how much I was depending on this behavior.</li>
+<li>Samza has reached <code>1.0</code>, but the project has not addressed many of my
+concerns. I believe that their vision for stream processing is very focused,
+which is not a bad thing, but may be incompatible with my needs.</li>
+<li>I believe that I made the right call on Flink. The rapid development over the
+last few years would have been difficult to keep up with. The project has
+improved significantly, and continues to have a bright future.
+Flink has since introduced
+<a href="https://flink.apache.org/stateful-functions.html">Stateful Functions</a>,
+which allow you to piece together an arbitrary graph of stateful actors.
+Between this and improved documentation of Flink&rsquo;s original stateful
+transformation functionality, I would strongly consider selecting it if I
+were starting from scratch today.</li>
+<li>Structured Streaming was technically an immature project at the time that I
+adopted it. It had been around for 3 minor releases, and has subsequently
+proven to be a stable API which needed very few major patches, but at the
+time it was not necessarily the safe choice I estimated it to be.</li>
+<li>My concerns about the grouping operation required by Spark turned out to be
+valid, and I should have spent more time investigating this functionality.
+Interestingly, it appears that Flink and DStreams both also typically perform
+a group by key operation as a prerequisite to stateful transformations,
+raising similar concerns. Flink, however, appears to support a non-grouping
+operation as well, which would be a major focus of mine for future work here.</li>
+</ul>
+<p>In the next post I will discuss some of the operational and practical
+issues that I&rsquo;ve encountered with Spark, and streaming applications in
+general. I expect it to be a useful post for those just starting to operate
+streaming applications, as well as experienced practitioners looking for
+increased performance and reliability.</p>
+            </div>
+        </article>
+        
+
+    
+
+<aside>
+    <div>
+        
+            
+            <hr/>
+            <p><a href="" id="series"></a>This is a post in the <b>Ordered Stateful Streaming</b> series.<br/> Other posts in this series:</p>
+        
+            
+            
+            
+            <ul class="series">
+                
+                    <li>
+                        
+                            <a href="https://kflansburg.com/posts/ordered-stateful-streaming/introduction/">Introduction</a>
+                        
+                    </li>
+                
+                    <li>
+                        
+                            Selecting a Framework
+                        
+                    </li>
+                
+            </ul>
+        
+    </div>
+</aside>
+
+    </main>
+
+	<footer>
+	<p>&copy; 2021 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a> |
+	<a href="https://github.com/kflansburg"><b>GitHub</b></a> |
+	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a> |
+	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a> |
+	</p>
+</footer>
+
+<script data-goatcounter="https://kflansburg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
