@@ -11,7 +11,7 @@ publishDir = "docs"
 
 # Parameters
 [params]
-    subtitle = "Discussions on Rust, Kubernetes, and more."
+    subtitle = "Discussions on Rust, Kubernetes, architecture, and more."
     description = "On this blog I will share some things that I'm working on related to Kubernetes, Rust, distributed architecture, and more."
     images = ['profile.jpg']
     dateFmt = "2006-01-02"
