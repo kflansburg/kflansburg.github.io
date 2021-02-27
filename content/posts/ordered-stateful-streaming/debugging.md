@@ -1,6 +1,8 @@
 ---
 title: "Debugging Process"
 date: 2020-12-05T00:00:04-00:00
+description: In the fifth post of this series on ordered, stateful streaming,
+    I will describe my process for debugging streaming pipelines.
 draft: true
 toc: false
 series:
