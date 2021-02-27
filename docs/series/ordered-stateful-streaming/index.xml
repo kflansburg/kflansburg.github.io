@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Mon, 18 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/series/ordered-stateful-streaming/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/series/ordered-stateful-streaming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Operating Pipelines</title>
+      <link>https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/</link>
+      <pubDate>Sat, 27 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/</guid>
+      <description>&lt;p&gt;In the third post of this series I will share operational and practical issues
+that I have encountered when developing and hosting long-running Spark
+streaming applications. This includes tips that will be useful to those who are
+first starting out with Scala and Spark, as well as insights on performance and
+reliability that will be useful to those who are more experienced.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Selecting a Framework</title>
       <link>https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/</link>

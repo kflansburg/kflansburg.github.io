@@ -1,7 +1,7 @@
 ---
 title: "Operating Pipelines"
-date: 2020-12-05T00:00:02-00:00
-draft: true
+date: 2021-02-27T00:00:00-00:00
+draft: false
 toc: false
 series:
 
