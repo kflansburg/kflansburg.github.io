@@ -2,6 +2,8 @@
 title: "Rust Continuous Delivery"
 date: "2020-11-26T00:00:00-00:00"
 draft: false
+description: In this post I discuss my approach to continuous delivery for Rust
+    applications, and how it has evolved over time.
 tags:
 
 - AWS

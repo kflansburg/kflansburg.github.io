@@ -8,11 +8,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
 	<title>Rust Continuous Delivery</title>
         <meta property="og:title" content="Rust Continuous Delivery" />
-<meta property="og:description" content="Over the last few years I have iterated several times on continuous delivery
-pipelines for Rust applications. Designing these pipelines involves balancing
-a number of factors including cost, complexity, ergonomics, and rigor. In this
-post I will describe several of these iterations, lessons learned, and share my
-most recent solution in detail." />
+<meta property="og:description" content="In this post I discuss my approach to continuous delivery for Rust applications, and how it has evolved over time." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://kflansburg.com/posts/rust-continuous-delivery/" />
 <meta property="og:image" content="https://kflansburg.com/profile.jpg"/>
@@ -23,13 +19,9 @@ most recent solution in detail." />
 <meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
 
 <meta name="twitter:title" content="Rust Continuous Delivery"/>
-<meta name="twitter:description" content="Over the last few years I have iterated several times on continuous delivery
-pipelines for Rust applications. Designing these pipelines involves balancing
-a number of factors including cost, complexity, ergonomics, and rigor. In this
-post I will describe several of these iterations, lessons learned, and share my
-most recent solution in detail."/>
+<meta name="twitter:description" content="In this post I discuss my approach to continuous delivery for Rust applications, and how it has evolved over time."/>
 
-	<meta name="description" content="Discussions on Rust, Kubernetes, and more.">
+	<meta name="description" content="In this post I discuss my approach to continuous delivery for Rust applications, and how it has evolved over time.">
 	
 	<link rel="stylesheet" href="/css/style.css">
 	
@@ -42,7 +34,7 @@ most recent solution in detail."/>
     <a href="https://kflansburg.com/">kflansburg.com</a>
     
     
-    <div style="text-align: right;">Discussions on Rust, Kubernetes, and more.</div>
+    <div style="text-align: right;">Discussions on Rust, Kubernetes, architecture, and more.</div>
     </div>
     <nav class='links'>
         
@@ -404,6 +396,13 @@ revert configuration drift.</p>
                 </li>
             
                 <li>
+                    
+                    <a href="/posts/introducing-krator/">
+                        Krator: My God, it&#39;s Full of States!
+                    </a>
+                </li>
+            
+                <li>
                      
                         <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
                     
@@ -425,13 +424,6 @@ revert configuration drift.</p>
                     
                     <a href="/posts/rust-continuous-delivery/">
                         Rust Continuous Delivery
-                    </a>
-                </li>
-            
-                <li>
-                    
-                    <a href="/posts/a-fistful-of-states/">
-                        A Fistful of States: More State Machine Patterns in Rust
                     </a>
                 </li>
             

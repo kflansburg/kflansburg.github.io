@@ -1,6 +1,8 @@
 ---
 title: "Selecting a Framework"
 date: 2021-01-18T00:00:00-00:00
+description: In the second post of this series on ordered, stateful streaming,
+    I will discuss the strengths and weaknesses of several popular frameworks. 
 draft: false
 toc: false
 series:

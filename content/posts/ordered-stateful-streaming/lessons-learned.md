@@ -1,6 +1,9 @@
 ---
 title: "Lessions Learned"
 date: 2020-12-05T00:00:05-00:00
+description: In the final post of this series on ordered, stateful streaming,
+    I reflect on my approach to designing this pipeline, and how I would
+    improve my process.
 draft: true
 toc: false
 series:

@@ -7,14 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Wed, 23 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/krustlet/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/krustlet/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Krator: My God, it&#39;s Full of States!</title>
+      <link>https://kflansburg.com/posts/introducing-krator/</link>
+      <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/introducing-krator/</guid>
+      <description>At the beginning of February, I published my second guest post on Deis Labs&#39; blog, which introduced Krator. Pronounced &amp;ldquo;crater&amp;rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!</description>
+    </item>
+    
     <item>
       <title>A Fistful of States: More State Machine Patterns in Rust</title>
       <link>https://kflansburg.com/posts/a-fistful-of-states/</link>
       <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/posts/a-fistful-of-states/</guid>
-      <description>My recent guest post on Deis Labs&#39; Blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
+      <description>My recent guest post on Deis Labs&#39; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
     </item>
     
   </channel>
