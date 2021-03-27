@@ -7,7 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Sat, 27 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Failure Modes</title>
+      <link>https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/</link>
+      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/</guid>
+      <description>&lt;p&gt;In the fourth post of this series I will outline several sources of failure in
+streaming applications. In each case I discuss the potential for data loss and
+possible mitigations. This analysis can drive decisions on the tradeoff between
+infrastructure costs and the upper bound on data loss.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Operating Pipelines</title>
       <link>https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/</link>

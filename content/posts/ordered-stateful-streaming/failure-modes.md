@@ -1,10 +1,10 @@
 ---
 title: "Failure Modes"
-date: 2020-12-05T00:00:03-00:00
+date: 2021-03-27T00:00:00-00:00
 description: In the fourth post of this series on ordered, stateful streaming,
     I will outline failure modes for streaming pipelines, and how to mitigate
     them.
-draft: true
+draft: false
 toc: false
 series:
 
