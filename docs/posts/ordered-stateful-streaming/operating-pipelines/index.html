@@ -10,10 +10,10 @@
         <meta property="og:title" content="Operating Pipelines" />
 <meta property="og:description" content="In the third post of this series on ordered, stateful streaming, I will share common pitfalls when operating Spark, and streaming workloads specifically." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/" />
-<meta property="og:image" content="https://kflansburg.com/profile.jpg"/>
-<meta property="article:published_time" content="2021-02-27T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-02-27T00:00:00+00:00" />
+<meta property="og:url" content="https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/" /><meta property="og:image" content="https://kflansburg.com/profile.jpg"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-02-27T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-02-27T00:00:00&#43;00:00" />
+<meta property="og:see_also" content="https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/" /><meta property="og:see_also" content="https://kflansburg.com/posts/ordered-stateful-streaming/introduction/" />
 
 
         <meta name="twitter:card" content="summary_large_image"/>
@@ -156,7 +156,7 @@ of conflicts, but it was a much less daunting process.  Note the <code>provided<
 indicate not to include a package:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt" id="0">0
+<pre class="chroma"><code><span class="lnt" id="0"><a style="outline: none; text-decoration:none; color:inherit" href="#0">0</a>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&#34;org.apache.spark&#34;</span> <span class="o">%%</span> <span class="s">&#34;spark-sql&#34;</span> <span class="o">%</span> <span class="s">&#34;3.0.1&#34;</span> <span class="o">%</span> <span class="s">&#34;provided&#34;</span>
