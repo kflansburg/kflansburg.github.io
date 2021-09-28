@@ -7,7 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Sat, 27 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 27 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Speed up Rust Builds with Cachepot</title>
+      <link>https://kflansburg.com/posts/rust-cachepot/</link>
+      <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/rust-cachepot/</guid>
+      <description>&lt;p&gt;One of the most effective ways for speeding up Rust builds is to cache the
+compiled artifacts of crate dependencies. Cargo does this automatically for
+local builds, but this quickly breaks down for distributed scenarios.&lt;/p&gt;
+&lt;p&gt;In this post, I will share my experiences with configuring and using Cachepot,
+a tool which wraps the Rust compiler and automatically caches build artifacts
+using a variety of cloud storage options. This creates a cache which can be
+shared amongst teams, used in ephemeral CI/CD environments, and even used for
+distributed builds.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Failure Modes</title>
       <link>https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/</link>
