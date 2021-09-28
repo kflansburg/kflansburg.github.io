@@ -43,9 +43,9 @@ drove Mozilla to begin work on `sccache` in late 2016.
 
 `sccache` was designed to be similar to `ccache`, but with support for
 Rust and cloud storage backends. At the time of this writing, `sccache` has
-become a fairly mature project, and appears to be fairly well known, but is
-somewhat notoriously difficult to configure. Recently, the pace of development
-appears to have slowed, and a number of critical updates have not been accepted. 
+become a mature project, and appears to be fairly well known, but is somewhat
+notoriously difficult to configure. Recently, the pace of development appears to
+have slowed, and a number of critical updates have not been accepted.
 
 One important update is the support of Amazon's
 [signature version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
@@ -71,7 +71,9 @@ Schuster ([@drahnr](https://github.com/drahnr)). In addition to the S3 patch
 mentioned above, Parity says that Cachepot includes "improved security
 properties and improvements all-around the code base", which they share upstream
 when possible. Given the impasse I had reached with `sccache`, I decided to
-give Cachepot a try.
+give Cachepot a try. For simplicity, I will refer only to Cachepot, but many of
+the features I will describe here are `sccache` features which Cachepot
+inherited.
 
 ### Install Cachepot
 
@@ -120,7 +122,7 @@ to use the IAM role attached to your build job. This
 [can be done](https://blog.jwr.io/aws/codebuild/container/iam/role/2019/05/30/iam-role-inside-container-inside-aws-codebuild.html)
 , but you must pass the `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` environment
 variable as a Docker build argument. _Unfortunately, this completely invalidates
-your Docker cache!_. For this reason, I chose to use static credentials. 
+your Docker cache!_ For this reason, I chose to use static credentials.
 
 ### Using Cachepot
 
@@ -163,6 +165,9 @@ CACHEPOT_BUCKET=<YOUR_BUCKET_NAME>
 AWS_REGION=...
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
+CACHEPOT_LOG=debug
+CACHEPOT_START_SERVER=1
+CACHEPOT_NO_DAEMON=1
 
 cachepot
 ```
@@ -191,8 +196,8 @@ There are a few things to keep in mind when using Cachepot:
   reduce the size of the cached artifacts, and reduce upload/download time.
 
 Note that incremental compilation and debug information are already disabled
-for the `--release` profile, so if you are only building your release binary
-in CI, then you may not have to make any changes here! 
+for the `--release` profile, so if you are only building a release binary in CI,
+then you may not have to make any changes here!
 
 ## Summary
 

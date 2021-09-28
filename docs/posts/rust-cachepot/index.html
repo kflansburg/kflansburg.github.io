@@ -59,7 +59,7 @@
 
             
                 <b><time>2021-09-27</time></b>
-                <span>-- 1167 Words</span>
+                <span>-- 1195 Words</span>
                 <br/>
                 
                     <a href="/tags/rust/">Rust,</a>
@@ -92,9 +92,9 @@ drove Mozilla to begin work on <code>sccache</code> in late 2016.</p>
 <h2 id="sccache">sccache</h2>
 <p><code>sccache</code> was designed to be similar to <code>ccache</code>, but with support for
 Rust and cloud storage backends. At the time of this writing, <code>sccache</code> has
-become a fairly mature project, and appears to be fairly well known, but is
-somewhat notoriously difficult to configure. Recently, the pace of development
-appears to have slowed, and a number of critical updates have not been accepted.</p>
+become a mature project, and appears to be fairly well known, but is somewhat
+notoriously difficult to configure. Recently, the pace of development appears to
+have slowed, and a number of critical updates have not been accepted.</p>
 <p>One important update is the support of Amazon&rsquo;s
 <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html">signature version 4</a>
 for authenticating requests to private S3 buckets. Regions built after 2013 only
@@ -116,7 +116,9 @@ Schuster (<a href="https://github.com/drahnr">@drahnr</a>). In addition to the S
 mentioned above, Parity says that Cachepot includes &ldquo;improved security
 properties and improvements all-around the code base&rdquo;, which they share upstream
 when possible. Given the impasse I had reached with <code>sccache</code>, I decided to
-give Cachepot a try.</p>
+give Cachepot a try. For simplicity, I will refer only to Cachepot, but many of
+the features I will describe here are <code>sccache</code> features which Cachepot
+inherited.</p>
 <h3 id="install-cachepot">Install Cachepot</h3>
 <p>Installing Cachepot can be done easily using Cargo:</p>
 <div class="highlight"><div class="chroma">
@@ -182,7 +184,7 @@ to use the IAM role attached to your build job. This
 <a href="https://blog.jwr.io/aws/codebuild/container/iam/role/2019/05/30/iam-role-inside-container-inside-aws-codebuild.html">can be done</a>
 , but you must pass the <code>AWS_CONTAINER_CREDENTIALS_RELATIVE_URI</code> environment
 variable as a Docker build argument. <em>Unfortunately, this completely invalidates
-your Docker cache!</em>. For this reason, I chose to use static credentials.</p>
+your Docker cache!</em> For this reason, I chose to use static credentials.</p>
 <h3 id="using-cachepot">Using Cachepot</h3>
 <p>Now that you have Cachepot installed and storage provisioned, you can use it by
 setting just a few environment variables:</p>
@@ -223,15 +225,18 @@ as a daemon. To view these, you can build locally, with Cachepot server running
 in the foreground:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt" id="0"><a style="outline: none; text-decoration:none; color:inherit" href="#0">0</a>
-</span><span class="lnt" id="1"><a style="outline: none; text-decoration:none; color:inherit" href="#1">1</a>
-</span><span class="lnt" id="2"><a style="outline: none; text-decoration:none; color:inherit" href="#2">2</a>
-</span><span class="lnt" id="3"><a style="outline: none; text-decoration:none; color:inherit" href="#3">3</a>
-</span><span class="lnt" id="4"><a style="outline: none; text-decoration:none; color:inherit" href="#4">4</a>
-</span><span class="lnt" id="5"><a style="outline: none; text-decoration:none; color:inherit" href="#5">5</a>
-</span><span class="lnt" id="6"><a style="outline: none; text-decoration:none; color:inherit" href="#6">6</a>
-</span><span class="lnt" id="7"><a style="outline: none; text-decoration:none; color:inherit" href="#7">7</a>
-</span><span class="lnt" id="8"><a style="outline: none; text-decoration:none; color:inherit" href="#8">8</a>
+<pre class="chroma"><code><span class="lnt" id="0"><a style="outline: none; text-decoration:none; color:inherit" href="#0"> 0</a>
+</span><span class="lnt" id="1"><a style="outline: none; text-decoration:none; color:inherit" href="#1"> 1</a>
+</span><span class="lnt" id="2"><a style="outline: none; text-decoration:none; color:inherit" href="#2"> 2</a>
+</span><span class="lnt" id="3"><a style="outline: none; text-decoration:none; color:inherit" href="#3"> 3</a>
+</span><span class="lnt" id="4"><a style="outline: none; text-decoration:none; color:inherit" href="#4"> 4</a>
+</span><span class="lnt" id="5"><a style="outline: none; text-decoration:none; color:inherit" href="#5"> 5</a>
+</span><span class="lnt" id="6"><a style="outline: none; text-decoration:none; color:inherit" href="#6"> 6</a>
+</span><span class="lnt" id="7"><a style="outline: none; text-decoration:none; color:inherit" href="#7"> 7</a>
+</span><span class="lnt" id="8"><a style="outline: none; text-decoration:none; color:inherit" href="#8"> 8</a>
+</span><span class="lnt" id="9"><a style="outline: none; text-decoration:none; color:inherit" href="#9"> 9</a>
+</span><span class="lnt" id="10"><a style="outline: none; text-decoration:none; color:inherit" href="#10">10</a>
+</span><span class="lnt" id="11"><a style="outline: none; text-decoration:none; color:inherit" href="#11">11</a>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
@@ -241,6 +246,9 @@ in the foreground:</p>
 <span class="nv">AWS_REGION</span><span class="o">=</span>...
 <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>...
 <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>...
+<span class="nv">CACHEPOT_LOG</span><span class="o">=</span>debug
+<span class="nv">CACHEPOT_START_SERVER</span><span class="o">=</span><span class="m">1</span>
+<span class="nv">CACHEPOT_NO_DAEMON</span><span class="o">=</span><span class="m">1</span>
 
 cachepot
 </code></pre></td></tr></table>
@@ -275,8 +283,8 @@ not an issue because the primary goal is to cache dependencies, which are
 reduce the size of the cached artifacts, and reduce upload/download time.</li>
 </ul>
 <p>Note that incremental compilation and debug information are already disabled
-for the <code>--release</code> profile, so if you are only building your release binary
-in CI, then you may not have to make any changes here!</p>
+for the <code>--release</code> profile, so if you are only building a release binary in CI,
+then you may not have to make any changes here!</p>
 <h2 id="summary">Summary</h2>
 <p>Cachepot (or <code>sccache</code>) can seem daunting to set up at first, but offers
 significant performance improvements in ephemeral build environments. For even
