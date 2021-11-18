@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
+	<title>Merge Queues with Bors</title>
+        <meta property="og:title" content="Merge Queues with Bors" />
+<meta property="og:description" content="Merge queues are used by many large software projects. This post explores why, and how to get started with one implementation, Bors." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kflansburg.com/posts/merge-queues/" /><meta property="og:image" content="https://kflansburg.com/profile.jpg"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-11-18T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-11-18T00:00:00&#43;00:00" />
+
+
+        <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
+
+<meta name="twitter:title" content="Merge Queues with Bors"/>
+<meta name="twitter:description" content="Merge queues are used by many large software projects. This post explores why, and how to get started with one implementation, Bors."/>
+
+	<meta name="description" content="Merge queues are used by many large software projects. This post explores why, and how to get started with one implementation, Bors.">
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+    <div>
+    
+    <a href="https://kflansburg.com/">kflansburg.com</a>
+    
+    
+    <div style="text-align: right;">Discussions on Rust, Kubernetes, architecture, and more.</div>
+    </div>
+    <nav class='links'>
+        
+            |
+            
+            <a href="/posts/"><b>Posts</b></a> |
+        
+            <a href="/tags/"><b>Tags</b></a> |
+        
+            <a href="/series/"><b>Series</b></a> |
+        
+    </nav>
+    
+</header>
+
+	
+    <main>
+        <article>
+            
+                <h1>Merge Queues with Bors</h1>
+            
+
+            
+                <b><time>2021-11-18</time></b>
+                <span>-- 1777 Words</span>
+                <br/>
+                
+                    <a href="/tags/rust/">Rust,</a>
+                
+                    <a href="/tags/developer-productivity/">Developer Productivity,</a>
+                
+                    <a href="/tags/github/">GitHub,</a>
+                
+            
+            <div>
+                
+                <p>Many engineering teams and open source projects are introducing merge queues as
+part of their workflows. This post explores several reasons for using a merge
+queue and describes how to set up Bors, the merge queue implementation used by
+the Rust language project.</p>
+<h2 id="what-is-a-merge-queue">What is a Merge Queue?</h2>
+<p>A merge queue is an application that integrates with your version control system
+(this post will focus on <code>git</code> and GitHub) to require that code changes are
+merged <em>atomically</em>, which ensures that the main branch always contains a
+version of the code that has been fully tested.</p>
+<h2 id="how-it-works">How it Works</h2>
+<p>Atomic merges are achieved by requiring that all pull requests (PRs) go through
+a <em>queue</em> in order to be merged to the main branch. This ensures that all
+branches are merged using a specific process. That process is:</p>
+<p><a href="/merge-queues/overview.svg">
+<figure>
+  <img src="/merge-queues/overview.svg" alt="Architecture Overview" />
+</figure>
+
+
+</a></p>
+<ol>
+<li>A PR is approved by humans, and the branch is added to the queue.</li>
+<li>Later, the branch is taken off the queue when it reaches the top. A canary
+branch is created by merging this branch with the main branch.</li>
+<li>The canary branch is run through the full test suite, ensuring that this
+exact version of the code passes.</li>
+<li>IFF the tests pass, the main branch is updated to point to the canary branch.</li>
+</ol>
+<p>This process ensures that the main branch only ever points to versions of the
+code which have been fully tested. It may seem counterintuitive that this is not
+already ensured by a typical workflow, so let&rsquo;s look at a concrete example of
+how this assumption can be broken.</p>
+<p>GitHub supports several <a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github">merge strategies</a>
+when merging a pull request. In each case, when the PR is merged, changes are
+combined with the latest version of the main branch <em>at the time of merge</em>,
+which creates an <em>entirely new commit</em>. There are a number of ways in which this
+can result in untested combinations of code on the main branch.</p>
+<p>The canonical example, paraphrased from <a href="https://github.com/bors-ng/bors-ng#but-dont-githubs-protected-branches-already-do-this">Bors' documentation</a>, is that
+two pull requests are open at the same time (a common occurrence in popular
+projects):</p>
+<ol>
+<li>Invokes a method <code>foo()</code> in a new location.</li>
+<li><em>Renames</em> <code>foo()</code> to <code>bar()</code>.</li>
+</ol>
+<p><a href="/merge-queues/multiple.svg">
+<figure>
+  <img src="/merge-queues/multiple.svg" alt="Multiple PR Example" />
+</figure>
+
+
+</a></p>
+<p>Both pull requests are branched from the same version of <code>main</code>, meaning that
+the second pull request is not aware of the new call sight for the function, and
+does not rename it. The test suite for both pull requests will pass, and GitHub
+will happily merge the two requests. The result is that <code>main</code> contains a broken
+version of the code which invokes the nonexistent function <code>foo()</code> somewhere.</p>
+<h3 id="what-about-branch-protection">What about Branch Protection?</h3>
+<p><a href="/merge-queues/rebase.svg">
+<figure>
+  <img src="/merge-queues/rebase.svg" alt="Rebase Example" />
+</figure>
+
+
+</a></p>
+<p>GitHub allows you to set a number of rules related to when and how PRs can be
+merged. One solution to the above problem would be to &ldquo;Require branches to be up
+to date&rdquo;. In the above example, the first PR would merge successfully, but then
+the author of the second PR would need to rebase their branch on <code>main</code> (so
+that it is up-to-date), and then would discover the problem when tests failed.</p>
+<p><a href="/merge-queues/multiple-rebase.svg">
+<figure>
+  <img src="/merge-queues/multiple-rebase.svg" alt="Multiple Rebase Example" />
+</figure>
+
+
+</a></p>
+<p>This approach works, but can become extremely tiresome for projects with many
+contributors and a long build process. Imagine now that there were three
+original PRs. After the first merges, the two other authors rebase and begin
+waiting for tests to complete. The first one to complete tests and merge wins
+the race, the other now has to rebase and test again. This results in multi-hour
+babysitting exercise to just land your one PR.</p>
+<h2 id="production-artifact-builds">Production Artifact Builds</h2>
+<p>Many projects build a production artifact, such as container image with
+<a href="https://drydock.app?utm_source=blog&amp;utm_medium=post&amp;utm_campaign=merge-queues&amp;utm_content=production-artifacts">DryDock</a>
+or a release binary, for each unique commit to certain branches. This
+artifact eventually makes it to production via continuous delivery, and can
+always be traced back to a specific revision of the main branch.</p>
+<p>Unfortunately, as mentioned above, GitHub <em>always</em> creates a new commit when
+merging. This means that there is always some period of time
+where you have merged a change but the production artifact is still being built.
+It also results in a relatively unnecessary second build, since this version of
+the code should have been tested and built <em>before</em> merging. Lastly, there is
+a possibility that the final build could fail (even for spurious reasons),
+leaving you in a bad spot.</p>
+<p><a href="/merge-queues/artifacts.svg">
+<figure>
+  <img src="/merge-queues/artifacts.svg" alt="Multiple Builds Example" />
+</figure>
+
+
+</a></p>
+<p>An astute reader would be familiar with <code>git</code>&rsquo;s capability for <em>fast-forward</em>
+merges, where a branch which is up-to-date with the main branch is merged by
+simply updating the branch pointer for <code>main</code> to include the new commits. GitHub
+<em>sort-of</em> supports this with their &ldquo;Rebase Merge&rdquo; option, but this still
+<em>creates a new commit</em> (I think to add additional metadata), resulting in an
+unnecessary build.</p>
+<p>It is possible to manually conduct this merge on your local machine and then
+push to <code>main</code>, but this is clearly not a scalable solution. Merge queues can
+solve this problem because many of them support doing a true fast-forward merge
+after the build on the canary branch has completed.</p>
+<h2 id="too-many-prs">Too Many PRs</h2>
+<p>Even with the above process (rebase, test, merge) automated, there is one more
+problem. Say your test suite takes 30 minutes to complete, but your project
+averages 50 PRs a day. You will forever fall behind because you can only merge
+~48 PRs a day when done one at a time! Many merge queues offer advanced
+functionality to support batching. This involves combining the changes from PRs
+that are approved at roughly the same time, testing them together, and then
+merging them in a group.</p>
+<p><a href="/merge-queues/batching.svg">
+<figure>
+  <img src="/merge-queues/batching.svg" alt="Batching Example" />
+</figure>
+
+
+</a></p>
+<p>This can introduce some complexities: how to handle a failed group test (i.e.
+identify which PR introduced the failure), and how to prioritize or test
+specific PRs in isolation. Many merge queue implementations have functionality
+to handle these scenarios, but that is out of scope for this post.</p>
+<h2 id="using-bors">Using Bors</h2>
+<p>Now that we have seen <em>why</em> you might want to use a merge queue, lets see how
+set your project up to use one. In this post we will look at
+<a href="https://github.com/bors-ng/bors-ng">Bors</a>, which is the merge queue that you
+will see used on the
+<a href="https://github.com/rust-lang/rust">Rust Language project repository</a>.</p>
+<p>Bors is a GitHub application, which makes it very easy to integrate with a
+GitHub project. There is a <a href="https://bors.tech/">free hosted solution</a>, but it
+only supports public repositories. If you want to use Bors with a private
+repository, you will need to host your own.</p>
+<h4 id="hosted-solution">Hosted Solution</h4>
+<p>To use the hosted solution, simply
+<a href="https://github.com/apps/bors/installations/new">install the GitHub App</a>, making
+sure to share the repository you want to use.</p>
+<h4 id="self-hosted">Self-Hosted</h4>
+<p>The self-hosted option is relatively easy to set up and maintain as well. The
+Bors repository provides
+<a href="https://github.com/bors-ng/bors-ng#how-to-set-up-your-own-real-instance">documentation</a>
+for how to deploy Bors on Heroku which, at a high level involves:</p>
+<ol>
+<li>
+<p><a href="https://github.com/settings/apps">Create a GitHub App</a> for the deployment to
+use. The documentation includes detailed instructions for the permissions and
+events you should configure for your app.</p>
+</li>
+<li>
+<p>Click below to create a deployment of Bors on Heroku. Fill out the
+application form with details from your GitHub App and click Deploy.</p>
+</li>
+</ol>
+<p><a href="https://heroku.com/deploy?template=https://github.com/bors-ng/bors-ng">
+<figure>
+  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy" />
+</figure>
+
+
+</a></p>
+<ol start="3">
+<li>Install the GitHub App you created in your account or organization and grant
+it access to your repository.</li>
+</ol>
+<h3 id="setup">Setup</h3>
+<p>Once you have Bors connected to your repository, you will need to make a few
+final changes.</p>
+<h4 id="test-triggers">Test Triggers</h4>
+<p>Your continuous integration tool should be reconfigured to trigger tests for the
+<code>staging</code> and <code>trying</code> branch, which are the branches Bors will use for testing
+changes before merging.</p>
+<p>I typically split up my tests into two sets based on how long they take to run.
+Fast tests like linting can be run for all branches, so that you can see their
+results prior to submitting to the merge queue. Slower tests are moved to only
+run on <code>staging</code> and <code>trying</code> so that they are not run redundantly.</p>
+<p>Bors provides some
+<a href="https://bors.tech/documentation/getting-started/">documentation</a> for how to
+reconfigure a number of different CI tools.</p>
+<h4 id="bors-configuration">Bors Configuration</h4>
+<p>The last step is to configure Bors' behavior for your repository. This is done
+by creating a <code>bors.toml</code> file in the repository root.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt" id="0"><a style="outline: none; text-decoration:none; color:inherit" href="#0">0</a>
+</span><span class="lnt" id="1"><a style="outline: none; text-decoration:none; color:inherit" href="#1">1</a>
+</span><span class="lnt" id="2"><a style="outline: none; text-decoration:none; color:inherit" href="#2">2</a>
+</span><span class="lnt" id="3"><a style="outline: none; text-decoration:none; color:inherit" href="#3">3</a>
+</span><span class="lnt" id="4"><a style="outline: none; text-decoration:none; color:inherit" href="#4">4</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-toml" data-lang="toml"><span class="c"># Test name(s) which must complete before PR is added to merge queue.</span>
+<span class="nx">pr_status</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;lint&#34;</span><span class="p">]</span>
+
+<span class="c"># Test name(s) which must complete on canary branch.</span>
+<span class="nx">status</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;test&#34;</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>At a minimum, this file should specify the tests that need to pass on the canary
+branch before it can be merged. You can also specify the tests which must pass
+on PR branches before they are accepted into the queue. The literal name of the
+tests can be a little tricky to determine depending on which CI tool you use.
+Check out the documentation link above for some examples.</p>
+<h3 id="workflow">Workflow</h3>
+<p>To verify that Bors is working, you can comment <code>bors ping</code> in a pull request,
+and Bors should comment with a reply.</p>
+<p>
+<figure>
+  <img src="/merge-queues/ping.png" alt="Ping Example" />
+</figure>
+
+
+</p>
+<p>When you wish to merge a PR, instead of pressing the big green merge button,
+comment <code>bors r+</code>. Bors will comment in acknowledgement. If you configured Bors
+to require some tests to pass before adding a PR to the queue, and those tests
+are still running, then Bors will comment to let you know that it is waiting for
+these to complete.</p>
+<p>
+<figure>
+  <img src="/merge-queues/pr-status.png" alt="PR Status Example" />
+</figure>
+
+
+</p>
+<p>Once the canary tests are running for the PR, you should see
+a new GitHub status from Bors on the pull request. This status will show a green
+check once the tests succeed.</p>
+<p>
+<figure>
+  <img src="/merge-queues/status.png" alt="Status Example" />
+</figure>
+
+
+</p>
+<p>When the tests pass, Bors will automatically merge the changes, and comment a
+summary of the tests run on the canary branch.</p>
+<p>
+<figure>
+  <img src="/merge-queues/complete.png" alt="Complete Example" />
+</figure>
+
+
+</p>
+<p>The merge commit will include a summary of the PRs included in the merge (if
+using batching), and indicate all PR authors as co-authors of the commit.</p>
+<p>To learn about all of the possible commands for Bors, check out this
+<a href="https://bors.tech/documentation/">documentation</a>.</p>
+<h4 id="troubleshooting">Troubleshooting</h4>
+<p>If you are using the hosted offering, be sure that the repository is not
+private. This is unsupported.</p>
+<p>For the self-hosted offering, if Bors does not seem to be responding to comments
+or successful tests, double check the <em>events</em> that the GitHub App is subscribed
+to. The necessary events are indicated in the
+<a href="https://github.com/bors-ng/bors-ng#required-github-app-permissions">list of permissions</a>
+in Bors' documentation. You may also wish to double check the names of the tests
+you specified in <code>bors.toml</code>. You can view the log output from Bors on Heroku,
+as well as the GitHub webhook payloads (in the App configuration, under the
+Advanced tab) to cross reference the names of the tests being reported.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Merge queues are a powerful tool for automating your code contribution process.
+They can be especially impactful for projects that have long-running test suites
+and many active contributors. Bors is one implementation of a merge queue which
+can be set up very easily for public projects. Private projects can set up a
+self-hosted deployment of Bors quickly using Heroku as well. Thanks for reading!</p>
+            </div>
+        </article>
+        
+
+    
+
+<aside>
+    <div>
+        
+            <div>
+            <h3>LATEST POSTS</h3>
+            </div>
+            <div>
+            <ul>
+            
+                <li>
+                    
+                    <a href="/posts/merge-queues/">
+                        Merge Queues with Bors
+                    </a>
+                </li>
+            
+                <li>
+                    
+                    <a href="/posts/rust-cachepot/">
+                        Speed up Rust Builds with Cachepot
+                    </a>
+                </li>
+            
+                <li>
+                     
+                        <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
+                    
+                    <a href="/posts/ordered-stateful-streaming/failure-modes/">
+                        Failure Modes
+                    </a>
+                </li>
+            
+                <li>
+                     
+                        <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
+                    
+                    <a href="/posts/ordered-stateful-streaming/operating-pipelines/">
+                        Operating Pipelines
+                    </a>
+                </li>
+            
+                <li>
+                    
+                    <a href="/posts/introducing-krator/">
+                        Krator: My God, it&#39;s Full of States!
+                    </a>
+                </li>
+            
+            </ul>
+            </div>
+        
+    </div>
+</aside>
+
+    </main>
+
+	<footer>
+	<p>&copy; 2021 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a> |
+	<a href="https://github.com/kflansburg"><b>GitHub</b></a> |
+	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a> |
+	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a> |
+	</p>
+</footer>
+
+<script data-goatcounter="https://kflansburg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
