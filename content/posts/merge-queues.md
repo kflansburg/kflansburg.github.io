@@ -1,6 +1,6 @@
 ---
 title: "Merge Queues with Bors"
-date: "2021-11-15T00:00:00-00:00"
+date: "2021-11-18T00:00:00-00:00"
 draft: false
 description: Merge queues are used by many large software projects. This post
   explores why, and how to get started with one implementation, Bors.

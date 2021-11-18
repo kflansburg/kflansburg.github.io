@@ -7,11 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Mon, 15 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Merge Queues with Bors</title>
       <link>https://kflansburg.com/posts/merge-queues/</link>
-      <pubDate>Mon, 15 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/posts/merge-queues/</guid>
       <description>&lt;p&gt;Many engineering teams and open source projects are introducing merge queues as
