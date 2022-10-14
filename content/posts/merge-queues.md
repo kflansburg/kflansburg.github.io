@@ -62,7 +62,7 @@ projects):
 [![Multiple PR Example](/merge-queues/multiple.svg)](/merge-queues/multiple.svg)
 
 Both pull requests are branched from the same version of `main`, meaning that
-the second pull request is not aware of the new call sight for the function, and
+the second pull request is not aware of the new call site for the function, and
 does not rename it. The test suite for both pull requests will pass, and GitHub
 will happily merge the two requests. The result is that `main` contains a broken
 version of the code which invokes the nonexistent function `foo()` somewhere.
