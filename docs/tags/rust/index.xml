@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Thoughts on WIT and wit-bindgen</title>
+      <link>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</link>
+      <pubDate>Wed, 03 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</guid>
+      <description>&lt;p&gt;The Wasm component model uses WIT to define runtime APIs available to guest
+components. &lt;code&gt;wit-bindgen&lt;/code&gt; can then be used by both guest component authors
+and host platforms to generate bindings in their language of choice to
+consume or implement these runtime APIs respectively. This post discusses
+some of the rough edges encountered when taking this for a spin.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Merge Queues with Bors</title>
       <link>https://kflansburg.com/posts/merge-queues/</link>
@@ -42,7 +55,7 @@ distributed builds.&lt;/p&gt;</description>
       <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/posts/introducing-krator/</guid>
-      <description>At the beginning of February, I published my second guest post on Deis Labs&#39; blog, which introduced Krator. Pronounced &amp;ldquo;crater&amp;rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!</description>
+      <description>At the beginning of February, I published my second guest post on Deis Labs&amp;rsquo; blog, which introduced Krator. Pronounced &amp;ldquo;crater&amp;rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!</description>
     </item>
     
     <item>
@@ -64,7 +77,7 @@ most recent solution in detail.&lt;/p&gt;</description>
       <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/posts/a-fistful-of-states/</guid>
-      <description>My recent guest post on Deis Labs&#39; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
+      <description>My recent guest post on Deis Labs&amp;rsquo; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
     </item>
     
   </channel>

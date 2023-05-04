@@ -4,7 +4,7 @@ date: 2020-12-18T00:00:00-00:00
 description: In the first post of this series on ordered, stateful streaming, I
     will outline the need for this type of transformation, and detailed
     requirements for such an application.
-draft: false
+draft: true
 toc: false
 series:
 

@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Thoughts on WIT and wit-bindgen</title>
+      <link>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</link>
+      <pubDate>Wed, 03 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</guid>
+      <description>&lt;p&gt;The Wasm component model uses WIT to define runtime APIs available to guest
+components. &lt;code&gt;wit-bindgen&lt;/code&gt; can then be used by both guest component authors
+and host platforms to generate bindings in their language of choice to
+consume or implement these runtime APIs respectively. This post discusses
+some of the rough edges encountered when taking this for a spin.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Merge Queues with Bors</title>
       <link>https://kflansburg.com/posts/merge-queues/</link>
@@ -37,66 +50,12 @@ distributed builds.&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>Failure Modes</title>
-      <link>https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/</link>
-      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/</guid>
-      <description>&lt;p&gt;In the fourth post of this series I will outline several sources of failure in
-streaming applications. In each case I discuss the potential for data loss and
-possible mitigations. This analysis can drive decisions on the tradeoff between
-infrastructure costs and the upper bound on data loss.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Operating Pipelines</title>
-      <link>https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/</link>
-      <pubDate>Sat, 27 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/</guid>
-      <description>&lt;p&gt;In the third post of this series I will share operational and practical issues
-that I have encountered when developing and hosting long-running Spark
-streaming applications. This includes tips that will be useful to those who are
-first starting out with Scala and Spark, as well as insights on performance and
-reliability that will be useful to those who are more experienced.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Krator: My God, it&#39;s Full of States!</title>
       <link>https://kflansburg.com/posts/introducing-krator/</link>
       <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/posts/introducing-krator/</guid>
-      <description>At the beginning of February, I published my second guest post on Deis Labs&#39; blog, which introduced Krator. Pronounced &amp;ldquo;crater&amp;rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!</description>
-    </item>
-    
-    <item>
-      <title>Selecting a Framework</title>
-      <link>https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/</link>
-      <pubDate>Mon, 18 Jan 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/</guid>
-      <description>&lt;p&gt;In the second post of this series I explore the strengths and weaknesses of
-several popular streaming frameworks. This analysis was performed a couple of
-years ago with a particular application in mind. These frameworks have since
-improved, but this post should provide some insight into the tradeoffs and
-decisions involved when designing streaming applications, and lessons can be
-learned from choices that did and did not pay off.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Introduction</title>
-      <link>https://kflansburg.com/posts/ordered-stateful-streaming/introduction/</link>
-      <pubDate>Fri, 18 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/ordered-stateful-streaming/introduction/</guid>
-      <description>&lt;p&gt;I recently spent two weeks tracking down a subtle bug in a Spark Structured
-Streaming application which I have been maintaining for several years. Having
-dealt with many such time-consuming bugs over the years, I&amp;rsquo;ve decided to
-compile my experiences working with ordered, stateful streaming applications
-into a series of posts. This series will serve as an introductory guide to the
-design and operation of stateful streaming pipelines, and hopefully spur some
-further development to simplify this process in the future.&lt;/p&gt;</description>
+      <description>At the beginning of February, I published my second guest post on Deis Labs&amp;rsquo; blog, which introduced Krator. Pronounced &amp;ldquo;crater&amp;rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!</description>
     </item>
     
     <item>
@@ -118,7 +77,7 @@ most recent solution in detail.&lt;/p&gt;</description>
       <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/posts/a-fistful-of-states/</guid>
-      <description>My recent guest post on Deis Labs&#39; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
+      <description>My recent guest post on Deis Labs&amp;rsquo; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
     </item>
     
   </channel>

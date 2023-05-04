@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
+	<title>Thoughts on WIT and wit-bindgen</title>
+        <meta property="og:title" content="Thoughts on WIT and wit-bindgen" />
+<meta property="og:description" content="sdkjflsfjd" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/" /><meta property="og:image" content="https://kflansburg.com/profile.jpg"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-05-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-05-03T00:00:00+00:00" />
+
+        <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
+
+<meta name="twitter:title" content="Thoughts on WIT and wit-bindgen"/>
+<meta name="twitter:description" content="sdkjflsfjd"/>
+
+	<meta name="description" content="sdkjflsfjd">
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+    <div>
+    
+    <a href="https://kflansburg.com/">kflansburg.com</a>
+    
+    
+    <div style="text-align: right;">Discussions on Rust, Kubernetes, architecture, and more.</div>
+    </div>
+    <nav class='links'>
+        
+            |
+            
+            <a href="/posts/"><b>Posts</b></a> |
+        
+            <a href="/tags/"><b>Tags</b></a> |
+        
+            <a href="/series/"><b>Series</b></a> |
+        
+    </nav>
+    
+</header>
+
+	
+    <main>
+        <article>
+            
+                <h1>Thoughts on WIT and wit-bindgen</h1>
+            
+
+            
+                <b><time>2023-05-03</time></b>
+                <span>-- 685 Words</span>
+                <br/>
+                
+                    <a href="/tags/rust/">Rust,</a>
+                
+                    <a href="/tags/wasm/">Wasm,</a>
+                
+            
+            <div>
+                
+                <p>The Wasm component model uses WIT to define runtime APIs available to guest
+components. <code>wit-bindgen</code> can then be used by both guest component authors
+and host platforms to generate bindings in their language of choice to
+consume or implement these runtime APIs respectively. This post discusses
+some of the rough edges encountered when taking this for a spin.</p>
+<p>First, I would like to note that many of these design choices were carefully
+considered by the contributors to the WIT specification and <code>wit-bindgen</code>.
+This post reflects a very shallow understanding of these decisions and further
+discussion may be found in issues in both the
+<a href="https://github.com/bytecodealliance/wit-bindgen">bytecodealliance/wit-bindgen</a> and
+<a href="https://github.com/WebAssembly/component-model">WebAssembly/component-model</a> repositories.</p>
+<h1 id="param-and-return-types">Param and Return Types</h1>
+<p>Prior to <code>v0.6</code>, <code>wit-bindgen </code> would generate types in different ways depending on
+if they were arguments to host or guest functions. Consider the following WIT definition
+for a &ldquo;proxy&rdquo; component:</p>
+<pre tabindex="0"><code class="language-wit" data-lang="wit">interface http {
+    record request {
+        url: string,
+        body: option&lt;string&gt;
+    }
+    record response {
+        body: string
+    }
+
+    // Proxy component can make a new outbound request
+    fetch: func(req: request) -&gt; response
+}
+
+default world proxy {
+    use self.http.{response, request}
+    
+    // Invoke the proxy component
+    export fetch: func(request) -&gt; response
+}
+</code></pre><p>The results in roughly the following Rust code for the component:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-1-0"><a class="lnlinks" href="#hl-1-0">0</a>
+</span><span class="lnt" id="hl-1-1"><a class="lnlinks" href="#hl-1-1">1</a>
+</span><span class="lnt" id="hl-1-2"><a class="lnlinks" href="#hl-1-2">2</a>
+</span><span class="lnt" id="hl-1-3"><a class="lnlinks" href="#hl-1-3">3</a>
+</span><span class="lnt" id="hl-1-4"><a class="lnlinks" href="#hl-1-4">4</a>
+</span><span class="lnt" id="hl-1-5"><a class="lnlinks" href="#hl-1-5">5</a>
+</span><span class="lnt" id="hl-1-6"><a class="lnlinks" href="#hl-1-6">6</a>
+</span><span class="lnt" id="hl-1-7"><a class="lnlinks" href="#hl-1-7">7</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">impl</span><span class="w"> </span><span class="n">Proxy</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Guest</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">fn</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">request</span>: <span class="nc">http</span>::<span class="n">RequestResult</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">http</span>::<span class="n">Response</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">http</span>::<span class="n">fetch</span><span class="p">(</span><span class="n">http</span>::<span class="n">RequestParam</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">url</span>: <span class="kp">&amp;</span><span class="nc">request</span><span class="p">.</span><span class="n">url</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">body</span>: <span class="nc">request</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">as_deref</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Note that we cannot forward what should be the same type to the host <code>fetch</code> function,
+and mapping the two types is quite clunky for non-primitive fields due to one using
+references.</p>
+<p>This was resolved by default in a recent PR, see this
+<a href="https://github.com/bytecodealliance/wit-bindgen/issues/551">discussion</a>. With this
+change, you can now do this!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-2-0"><a class="lnlinks" href="#hl-2-0">0</a>
+</span><span class="lnt" id="hl-2-1"><a class="lnlinks" href="#hl-2-1">1</a>
+</span><span class="lnt" id="hl-2-2"><a class="lnlinks" href="#hl-2-2">2</a>
+</span><span class="lnt" id="hl-2-3"><a class="lnlinks" href="#hl-2-3">3</a>
+</span><span class="lnt" id="hl-2-4"><a class="lnlinks" href="#hl-2-4">4</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">impl</span><span class="w"> </span><span class="n">Proxy</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Guest</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">fn</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">request</span>: <span class="nc">http</span>::<span class="n">Request</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">http</span>::<span class="n">Response</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">http</span>::<span class="n">fetch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">request</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="map-and-recursive-types">Map and Recursive Types</h1>
+<p>Types like <a href="https://docs.rs/serde_json/latest/serde_json/value/enum.Value.html">serde_json::Value</a>
+are very useful for constructing arbitrary data structures which could
+represent complex arguments to host APIs or request and response bodies.
+Such a type requires both maps and self-referential types. Ideally you
+could do something like this:</p>
+<pre tabindex="0"><code class="language-wit" data-lang="wit">interface types {
+    variant value {
+        null(void),
+        bool(bool),
+        number(f64),
+        string(string),
+        array(list&lt;value&gt;),
+        object(map&lt;string, value&gt;)
+    }
+}
+</code></pre><p>Map types across languages are more complex than the other primitive
+types that WIT supports, so it makes sense that they would not be
+straightforward to support, but most languages do have some sort of
+map type, and it is currently very limiting to instead have to
+represent such data as <code>list&lt;tuple&lt;string, string&gt;&gt;</code>.</p>
+<p>Recursive types are even more difficult to support, as some languages
+may not have them at all, but they are very useful for
+representing complex data structures such as trees. For more context,
+see this <a href="https://github.com/WebAssembly/component-model/issues/56">discussion</a>.</p>
+<h1 id="wasi-linking">WASI Linking</h1>
+<p>Compiling a component to <code>wasm32-wasi</code> is currently tricky. Hosts implement
+prototype Wit definitions with Wasi functionality, such as
+<a href="https://github.com/bytecodealliance/preview2-prototyping/tree/main/wit">this example</a>.
+A shim component built from the same repository is then included in the
+component binary as an &ldquo;adapter&rdquo;. This shim consumes the new Wit-based
+Wasi APIs, and exports the legacy Wasi APIs that the <code>wasm32-wasi</code>
+compiler target expects.</p>
+<h1 id="objects">Objects</h1>
+<p>Another major ergonomic gap currently is the lack of objects. Such a type would
+be like the <code>record</code> or <code>variant</code> type, but with host-implemented methods
+that operate on specific instances of the type. This would be very useful for
+runtimes to provide non-primitive types, for instance:</p>
+<pre tabindex="0"><code>object request {
+    body: string
+
+    // Host implements complexities of JSON parsing
+    json: func() -&gt; value
+}
+</code></pre><p>Another appealing advantage of such types is that they could significantly reduce
+the amount of data shared between components. This is because components can
+pass references between them with methods to interact safely with the contained data,
+instead of fully copying the data.</p>
+<p>It turns out that this <em>is</em> planned in the WIT spec as <code>resource</code> types, but
+this is currently <a href="https://github.com/WebAssembly/component-model/blob/main/design/mvp/WIT.md#handles">vaguely documented</a>,
+and is not implemented yet in <code>wit-bindgen</code>.</p>
+<p>Some experimental codebases using Wit have implemented a workaround which involves
+creating handles which reference objects in a global table managed by the host. Guests
+then explicitly pass these handles into host methods. A description of this approach can
+be found <a href="https://github.com/WebAssembly/WASI/blob/main/docs/WitInWasi.md#Resources">here</a>.</p>
+            </div>
+        </article>
+        
+
+<aside>
+    <div>
+        
+            <div>
+            <h3>LATEST POSTS</h3>
+            </div>
+            <div>
+            <ul>
+            
+                <li>
+                    
+                    <a href="/posts/wit-and-wit-bindgen-thoughts/">
+                        Thoughts on WIT and wit-bindgen
+                    </a>
+                </li>
+            
+                <li>
+                    
+                    <a href="/posts/merge-queues/">
+                        Merge Queues with Bors
+                    </a>
+                </li>
+            
+                <li>
+                    
+                    <a href="/posts/rust-cachepot/">
+                        Speed up Rust Builds with Cachepot
+                    </a>
+                </li>
+            
+                <li>
+                    
+                    <a href="/posts/introducing-krator/">
+                        Krator: My God, it&#39;s Full of States!
+                    </a>
+                </li>
+            
+                <li>
+                    
+                    <a href="/posts/rust-continuous-delivery/">
+                        Rust Continuous Delivery
+                    </a>
+                </li>
+            
+            </ul>
+            </div>
+        
+    </div>
+</aside>
+
+    </main>
+
+	<footer>
+	<p>&copy; 2023 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a> |
+	<a href="https://github.com/kflansburg"><b>GitHub</b></a> |
+	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a> |
+	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a> |
+	</p>
+</footer>
+
+<script data-goatcounter="https://kflansburg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

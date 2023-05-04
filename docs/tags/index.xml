@@ -7,7 +7,25 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rust</title>
+      <link>https://kflansburg.com/tags/rust/</link>
+      <pubDate>Wed, 03 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/tags/rust/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Wasm</title>
+      <link>https://kflansburg.com/tags/wasm/</link>
+      <pubDate>Wed, 03 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://kflansburg.com/tags/wasm/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Developer Productivity</title>
       <link>https://kflansburg.com/tags/developer-productivity/</link>
@@ -27,47 +45,11 @@
     </item>
     
     <item>
-      <title>Rust</title>
-      <link>https://kflansburg.com/tags/rust/</link>
-      <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/rust/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>CICD</title>
       <link>https://kflansburg.com/tags/cicd/</link>
       <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
       
       <guid>https://kflansburg.com/tags/cicd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Scala</title>
-      <link>https://kflansburg.com/tags/scala/</link>
-      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/scala/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Spark</title>
-      <link>https://kflansburg.com/tags/spark/</link>
-      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/spark/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Streaming</title>
-      <link>https://kflansburg.com/tags/streaming/</link>
-      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/streaming/</guid>
       <description></description>
     </item>
     

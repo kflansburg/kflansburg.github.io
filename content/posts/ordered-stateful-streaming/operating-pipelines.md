@@ -4,7 +4,7 @@ date: 2021-02-27T00:00:00-00:00
 description: In the third post of this series on ordered, stateful streaming, I
     will share common pitfalls when operating Spark, and streaming workloads
     specifically.
-draft: false
+draft: true
 toc: false
 series:
 

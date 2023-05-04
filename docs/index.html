@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-	<meta name="generator" content="Hugo 0.82.0" />
+	<meta name="generator" content="Hugo 0.111.3">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +12,6 @@
 <meta property="og:description" content="On this blog I will share some things that I&#39;m working on related to Kubernetes, Rust, distributed architecture, and more." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://kflansburg.com/" /><meta property="og:image" content="https://kflansburg.com/profile.jpg"/>
-
 
         <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
@@ -57,7 +56,34 @@
 	<h2>
             
             
-                
+            
+            <a href="https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/">
+                Thoughts on WIT and wit-bindgen
+            </a>
+        </h2>
+	<b><time>2023-05-03</time></b>
+        <span>-- 685 Words</span><br/>
+	
+	<a href="/tags/rust/">Rust,</a>
+	
+	<a href="/tags/wasm/">Wasm,</a>
+	
+	<div>
+		<p>The Wasm component model uses WIT to define runtime APIs available to guest
+components. <code>wit-bindgen</code> can then be used by both guest component authors
+and host platforms to generate bindings in their language of choice to
+consume or implement these runtime APIs respectively. This post discusses
+some of the rough edges encountered when taking this for a spin.</p>
+		
+			<a href="https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h2>
+            
             
             
             <a href="https://kflansburg.com/posts/merge-queues/">
@@ -88,8 +114,6 @@ the Rust language project.</p>
 			<article>
 	<h2>
             
-            
-                
             
             
             <a href="https://kflansburg.com/posts/rust-cachepot/">
@@ -123,77 +147,6 @@ distributed builds.</p>
 	<h2>
             
             
-                
-            
-             
-                <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
-            
-            <a href="https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/">
-                Failure Modes
-            </a>
-        </h2>
-	<b><time>2021-03-27</time></b>
-        <span>-- 841 Words</span><br/>
-	
-	<a href="/tags/spark/">Spark,</a>
-	
-	<a href="/tags/streaming/">Streaming,</a>
-	
-	<a href="/tags/scala/">Scala,</a>
-	
-	<div>
-		<p>In the fourth post of this series I will outline several sources of failure in
-streaming applications. In each case I discuss the potential for data loss and
-possible mitigations. This analysis can drive decisions on the tradeoff between
-infrastructure costs and the upper bound on data loss.</p>
-		
-			<a href="https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h2>
-            
-            
-                
-            
-             
-                <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
-            
-            <a href="https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/">
-                Operating Pipelines
-            </a>
-        </h2>
-	<b><time>2021-02-27</time></b>
-        <span>-- 2221 Words</span><br/>
-	
-	<a href="/tags/spark/">Spark,</a>
-	
-	<a href="/tags/streaming/">Streaming,</a>
-	
-	<a href="/tags/scala/">Scala,</a>
-	
-	<div>
-		<p>In the third post of this series I will share operational and practical issues
-that I have encountered when developing and hosting long-running Spark
-streaming applications. This includes tips that will be useful to those who are
-first starting out with Scala and Spark, as well as insights on performance and
-reliability that will be useful to those who are more experienced.</p>
-		
-			<a href="https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h2>
-            
-            
-                
-            
             
             <a href="https://kflansburg.com/posts/introducing-krator/">
                 Krator: My God, it&#39;s Full of States!
@@ -209,7 +162,7 @@ reliability that will be useful to those who are more experienced.</p>
 	<a href="/tags/krustlet/">Krustlet,</a>
 	
 	<div>
-		At the beginning of February, I published my second guest post on Deis Labs' blog, which introduced Krator. Pronounced &ldquo;crater&rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!
+		At the beginning of February, I published my second guest post on Deis Labs&rsquo; blog, which introduced Krator. Pronounced &ldquo;crater&rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!
 		
 	</div>
 </article>
@@ -218,81 +171,6 @@ reliability that will be useful to those who are more experienced.</p>
 			<article>
 	<h2>
             
-            
-                
-            
-             
-                <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
-            
-            <a href="https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/">
-                Selecting a Framework
-            </a>
-        </h2>
-	<b><time>2021-01-18</time></b>
-        <span>-- 2011 Words</span><br/>
-	
-	<a href="/tags/spark/">Spark,</a>
-	
-	<a href="/tags/streaming/">Streaming,</a>
-	
-	<a href="/tags/scala/">Scala,</a>
-	
-	<div>
-		<p>In the second post of this series I explore the strengths and weaknesses of
-several popular streaming frameworks. This analysis was performed a couple of
-years ago with a particular application in mind. These frameworks have since
-improved, but this post should provide some insight into the tradeoffs and
-decisions involved when designing streaming applications, and lessons can be
-learned from choices that did and did not pay off.</p>
-		
-			<a href="https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h2>
-            
-            
-                
-            
-             
-                <a href="/series/ordered-stateful-streaming/">Ordered Stateful Streaming</a> | 
-            
-            <a href="https://kflansburg.com/posts/ordered-stateful-streaming/introduction/">
-                Introduction
-            </a>
-        </h2>
-	<b><time>2020-12-18</time></b>
-        <span>-- 1792 Words</span><br/>
-	
-	<a href="/tags/spark/">Spark,</a>
-	
-	<a href="/tags/streaming/">Streaming,</a>
-	
-	<a href="/tags/scala/">Scala,</a>
-	
-	<div>
-		<p>I recently spent two weeks tracking down a subtle bug in a Spark Structured
-Streaming application which I have been maintaining for several years. Having
-dealt with many such time-consuming bugs over the years, I&rsquo;ve decided to
-compile my experiences working with ordered, stateful streaming applications
-into a series of posts. This series will serve as an introductory guide to the
-design and operation of stateful streaming pipelines, and hopefully spur some
-further development to simplify this process in the future.</p>
-		
-			<a href="https://kflansburg.com/posts/ordered-stateful-streaming/introduction/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h2>
-            
-            
-                
             
             
             <a href="https://kflansburg.com/posts/rust-continuous-delivery/">
@@ -300,7 +178,7 @@ further development to simplify this process in the future.</p>
             </a>
         </h2>
 	<b><time>2020-11-26</time></b>
-        <span>-- 2276 Words</span><br/>
+        <span>-- 2297 Words</span><br/>
 	
 	<a href="/tags/aws/">AWS,</a>
 	
@@ -329,8 +207,6 @@ most recent solution in detail.</p>
 	<h2>
             
             
-                
-            
             
             <a href="https://kflansburg.com/posts/a-fistful-of-states/">
                 A Fistful of States: More State Machine Patterns in Rust
@@ -346,7 +222,7 @@ most recent solution in detail.</p>
 	<a href="/tags/krustlet/">Krustlet,</a>
 	
 	<div>
-		My recent guest post on Deis Labs' blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.
+		My recent guest post on Deis Labs&rsquo; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.
 		
 	</div>
 </article>
@@ -361,7 +237,7 @@ most recent solution in detail.</p>
 	</main>
 
 	<footer>
-	<p>&copy; 2021 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a> |
+	<p>&copy; 2023 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a> |
 	<a href="https://github.com/kflansburg"><b>GitHub</b></a> |
 	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a> |
 	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a> |

@@ -2,25 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://kflansburg.com/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/posts/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/tags/rust/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/tags/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/tags/wasm/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://kflansburg.com/tags/developer-productivity/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kflansburg.com/tags/github/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://kflansburg.com/posts/merge-queues/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/rust/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kflansburg.com/tags/cicd/</loc>
@@ -28,27 +34,6 @@
   </url><url>
     <loc>https://kflansburg.com/posts/rust-cachepot/</loc>
     <lastmod>2021-09-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/ordered-stateful-streaming/failure-modes/</loc>
-    <lastmod>2021-03-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/series/ordered-stateful-streaming/</loc>
-    <lastmod>2021-03-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/scala/</loc>
-    <lastmod>2021-03-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/series/</loc>
-    <lastmod>2021-03-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/spark/</loc>
-    <lastmod>2021-03-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/streaming/</loc>
-    <lastmod>2021-03-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/ordered-stateful-streaming/operating-pipelines/</loc>
-    <lastmod>2021-02-27T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kflansburg.com/posts/introducing-krator/</loc>
     <lastmod>2021-02-15T00:00:00+00:00</lastmod>
@@ -58,12 +43,6 @@
   </url><url>
     <loc>https://kflansburg.com/tags/kubernetes/</loc>
     <lastmod>2021-02-15T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/ordered-stateful-streaming/selecting-a-framework/</loc>
-    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/ordered-stateful-streaming/introduction/</loc>
-    <lastmod>2020-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kflansburg.com/tags/aws/</loc>
     <lastmod>2020-11-26T00:00:00+00:00</lastmod>
@@ -76,5 +55,7 @@
   </url><url>
     <loc>https://kflansburg.com/posts/a-fistful-of-states/</loc>
     <lastmod>2020-09-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/series/</loc>
   </url>
 </urlset>
