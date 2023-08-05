@@ -1,8 +1,7 @@
 ---
 title: "Thoughts on WIT and wit-bindgen"
 date: 2023-05-03T00:00:00-00:00
-description: sdkjflsfjd
-draft: false
+draft: true
 tags:
 
 - Rust

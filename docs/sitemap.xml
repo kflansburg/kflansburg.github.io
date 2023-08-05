@@ -2,31 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kflansburg.com/</loc>
-    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/</loc>
-    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/rust/</loc>
-    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/</loc>
-    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</loc>
-    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/wasm/</loc>
-    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://kflansburg.com/tags/developer-productivity/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kflansburg.com/tags/github/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://kflansburg.com/</loc>
+    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://kflansburg.com/posts/merge-queues/</loc>
+    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/posts/</loc>
+    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/tags/rust/</loc>
+    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://kflansburg.com/tags/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kflansburg.com/tags/cicd/</loc>
