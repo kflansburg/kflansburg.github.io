@@ -1,6 +1,7 @@
 ---
 title: "Thoughts on WIT and wit-bindgen"
 date: 2023-05-03T00:00:00-00:00
+description: Discussion of (current) ergonomics of using WIT for API description.
 draft: true
 tags:
 
