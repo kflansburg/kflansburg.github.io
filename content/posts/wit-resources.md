@@ -36,7 +36,7 @@ let body = response_body(response);
 As you can see, this works fine, but is clunky, and makes raw host APIs unpleasent to interact with. 
 Many platforms then have to ship an "sdk" or other language-specific wrapper to make this more ergonomic.
 
-## Usage 
+## Usage
 
 Now, with resources, we can do this:
 
@@ -47,8 +47,8 @@ let status = response.status();
 let body = response.body();
 ```
 
-In this case, the `response` object can be used like a first-class object, and data such as `body` is 
-only copied into the guest memory if it is used. 
+In this case, the `response` object can be used like a first-class object, and data such as `body` is
+only copied into the guest memory if it is used.
 
 ## Definition
 
@@ -71,12 +71,12 @@ interface http {
 There are a couple of interesting things here. First, there is a `constructor` definition, which allows the guest to create
 new response objects (which are still managed by the host), and obtain a handle to them.
 
-Next, the `status` method takes a `borrow` of `response`, which means that response will live beyond usage of that method. `body`, on the other hand, takes ownership of and consumes `response`, which cannot be used again. 
+Next, the `status` method takes a `borrow` of `response`, which means that response will live beyond usage of that method. `body`, on the other hand, takes ownership of and consumes `response`, which cannot be used again.
 
 Finally, `not-found` is a `static` method, which does not take a `self` parameter, but allows for related, non-instance functions to be namespaced within the resource.
 
 ## Conclusion
 
 Resources were a key missing piece and will signifigantly improve the ergonomics and sophistication of WASM host APIs. Specifically, APIs related to managing file descriptors, streams, or deeply nested types will be significantly easier
-to develop with for both the platform and the guest. Finally, this type of pattern will be very useful for enabling 
+to develop with for both the platform and the guest. Finally, this type of pattern will be very useful for enabling
 capability-based access patterns in guest components.
