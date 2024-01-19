@@ -7,31 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Sat, 05 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>WIT Resources</title>
-      <link>https://kflansburg.com/posts/wit-resources/</link>
-      <pubDate>Sat, 05 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/wit-resources/</guid>
-      <description>&lt;p&gt;Support for &amp;ldquo;resources&amp;rdquo; &lt;a href=&#34;https://github.com/bytecodealliance/wit-bindgen/commit/62f3f649e38ed4f111729595ce32ee0308ab0f7c&#34;&gt;just landed&lt;/a&gt;
-in the &lt;code&gt;wit-bindgen&lt;/code&gt; repository. This post explores why resources are crucial
-for writing rich, object-oriented APIs in WIT.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Thoughts on WIT and wit-bindgen</title>
-      <link>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</link>
-      <pubDate>Wed, 03 May 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/wit-and-wit-bindgen-thoughts/</guid>
-      <description>&lt;p&gt;The Wasm component model uses WIT to define runtime APIs available to guest
-components. &lt;code&gt;wit-bindgen&lt;/code&gt; can then be used by both guest component authors
-and host platforms to generate bindings in their language of choice to
-consume or implement these runtime APIs respectively. This post discusses
-some of the rough edges encountered when taking this for a spin.&lt;/p&gt;</description>
-    </item>
-    
+    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Merge Queues with Bors</title>
       <link>https://kflansburg.com/posts/merge-queues/</link>

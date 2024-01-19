@@ -2,7 +2,7 @@
 title: "WIT Resources"
 date: 2023-08-05T00:00:00-00:00
 description: Introduction to "resources" in WIT.
-draft: false
+draft: true
 tags:
 
 - Rust
