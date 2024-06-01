@@ -2,83 +2,89 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on kflansburg.com</title>
-    <link>https://kflansburg.com/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on kflansburg.com</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 01 Jun 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Developer Productivity</title>
-      <link>https://kflansburg.com/tags/developer-productivity/</link>
-      <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/developer-productivity/</guid>
+      <title>CI/CD</title>
+      <link>/tags/ci/cd/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/ci/cd/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>GitHub</title>
-      <link>https://kflansburg.com/tags/github/</link>
-      <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/github/</guid>
+      <title>GitHub Actions</title>
+      <link>/tags/github-actions/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/github-actions/</guid>
       <description></description>
     </item>
-    
+    <item>
+      <title>Miri</title>
+      <link>/tags/miri/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/miri/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Rust</title>
-      <link>https://kflansburg.com/tags/rust/</link>
-      <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/rust/</guid>
+      <link>/tags/rust/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/rust/</guid>
       <description></description>
     </item>
-    
+    <item>
+      <title>Developer Productivity</title>
+      <link>/tags/developer-productivity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/developer-productivity/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>GitHub</title>
+      <link>/tags/github/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/github/</guid>
+      <description></description>
+    </item>
     <item>
       <title>CICD</title>
-      <link>https://kflansburg.com/tags/cicd/</link>
-      <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/cicd/</guid>
+      <link>/tags/cicd/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/cicd/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Krustlet</title>
-      <link>https://kflansburg.com/tags/krustlet/</link>
-      <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/krustlet/</guid>
+      <link>/tags/krustlet/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/krustlet/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Kubernetes</title>
-      <link>https://kflansburg.com/tags/kubernetes/</link>
-      <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/kubernetes/</guid>
+      <link>/tags/kubernetes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/kubernetes/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>AWS</title>
-      <link>https://kflansburg.com/tags/aws/</link>
-      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/aws/</guid>
+      <link>/tags/aws/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/aws/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Terraform</title>
-      <link>https://kflansburg.com/tags/terraform/</link>
-      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/tags/terraform/</guid>
+      <link>/tags/terraform/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/tags/terraform/</guid>
       <description></description>
     </item>
-    
   </channel>
 </rss>

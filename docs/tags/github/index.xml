@@ -2,23 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>GitHub on kflansburg.com</title>
-    <link>https://kflansburg.com/tags/github/</link>
+    <link>/tags/github/</link>
     <description>Recent content in GitHub on kflansburg.com</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/github/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Merge Queues with Bors</title>
-      <link>https://kflansburg.com/posts/merge-queues/</link>
+      <link>/posts/merge-queues/</link>
       <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/merge-queues/</guid>
-      <description>&lt;p&gt;Many engineering teams and open source projects are introducing merge queues as
-part of their workflows. This post explores several reasons for using a merge
-queue and describes how to set up Bors, the merge queue implementation used by
-the Rust language project.&lt;/p&gt;</description>
+      <guid>/posts/merge-queues/</guid>
+      <description>&lt;p&gt;Many engineering teams and open source projects are introducing merge queues as&#xA;part of their workflows. This post explores several reasons for using a merge&#xA;queue and describes how to set up Bors, the merge queue implementation used by&#xA;the Rust language project.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

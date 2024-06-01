@@ -2,54 +2,66 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kflansburg.com/tags/developer-productivity/</loc>
+    <loc>/tags/ci/cd/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/posts/improving-rust-codebase-quality-with-miri-in-ci/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/github-actions/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/miri/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/posts/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/rust/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/</loc>
+    <lastmod>2024-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/developer-productivity/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/tags/github/</loc>
+    <loc>/tags/github/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/</loc>
+    <loc>/posts/merge-queues/</loc>
     <lastmod>2021-11-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/posts/merge-queues/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/posts/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/rust/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/</loc>
-    <lastmod>2021-11-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://kflansburg.com/tags/cicd/</loc>
+    <loc>/tags/cicd/</loc>
     <lastmod>2021-09-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/posts/rust-cachepot/</loc>
+    <loc>/posts/rust-cachepot/</loc>
     <lastmod>2021-09-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/posts/introducing-krator/</loc>
+    <loc>/posts/introducing-krator/</loc>
     <lastmod>2021-02-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/tags/krustlet/</loc>
+    <loc>/tags/krustlet/</loc>
     <lastmod>2021-02-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/tags/kubernetes/</loc>
+    <loc>/tags/kubernetes/</loc>
     <lastmod>2021-02-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/tags/aws/</loc>
+    <loc>/tags/aws/</loc>
     <lastmod>2020-11-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/posts/rust-continuous-delivery/</loc>
+    <loc>/posts/rust-continuous-delivery/</loc>
     <lastmod>2020-11-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/tags/terraform/</loc>
+    <loc>/tags/terraform/</loc>
     <lastmod>2020-11-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/posts/a-fistful-of-states/</loc>
+    <loc>/posts/a-fistful-of-states/</loc>
     <lastmod>2020-09-23T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://kflansburg.com/series/</loc>
+    <loc>/series/</loc>
   </url>
 </urlset>

@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-	<meta name="generator" content="Hugo 0.111.3">
+	<meta name="generator" content="Hugo 0.126.2">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre&display=swap" rel="stylesheet"> 
 	<title>kflansburg.com</title>
-        <meta property="og:title" content="kflansburg.com" />
-<meta property="og:description" content="On this blog I will share some things that I&#39;m working on related to Kubernetes, Rust, distributed architecture, and more." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://kflansburg.com/" /><meta property="og:image" content="https://kflansburg.com/profile.jpg"/>
+        <meta property="og:url" content="/">
+  <meta property="og:site_name" content="kflansburg.com">
+  <meta property="og:title" content="kflansburg.com">
+  <meta property="og:description" content="On this blog I will share some things that I&#39;m working on related to Kubernetes, Rust, distributed architecture, and more.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+    <meta property="og:image" content="/profile.jpg">
 
-        <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://kflansburg.com/profile.jpg"/>
-
-<meta name="twitter:title" content="kflansburg.com"/>
-<meta name="twitter:description" content="On this blog I will share some things that I&#39;m working on related to Kubernetes, Rust, distributed architecture, and more."/>
+        
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="/profile.jpg">
+  <meta name="twitter:title" content="kflansburg.com">
+  <meta name="twitter:description" content="On this blog I will share some things that I&#39;m working on related to Kubernetes, Rust, distributed architecture, and more.">
 
 	<meta name="description" content="On this blog I will share some things that I&#39;m working on related to Kubernetes, Rust, distributed architecture, and more.">
 	
@@ -29,7 +32,7 @@
 	<header>
     <div>
     
-    <a href="https://kflansburg.com/">kflansburg.com</a>
+    <a href="/">kflansburg.com</a>
     
     
     <div style="text-align: right;">Discussions on Rust, Kubernetes, architecture, and more.</div>
@@ -57,7 +60,36 @@
             
             
             
-            <a href="https://kflansburg.com/posts/merge-queues/">
+            <a href="/posts/improving-rust-codebase-quality-with-miri-in-ci/">
+                Detecting Undefined Behavior in Rust with Miri in GitHub Actions
+            </a>
+        </h2>
+	<b><time>2024-06-01</time></b>
+        <span>-- 720 Words</span><br/>
+	
+	<a href="/tags/rust/">Rust,</a>
+	
+	<a href="/tags/ci/cd/">CI/CD,</a>
+	
+	<a href="/tags/miri/">Miri,</a>
+	
+	<a href="/tags/github-actions/">GitHub Actions,</a>
+	
+	<div>
+		<p>Miri is an interpreter for Rust&rsquo;s mid-level intermediate representation (MIR), which allows for the detection of undefined behavior and other errors at compile time. Integrating Miri into Continuous Integration (CI) workflows can significantly improve the quality of a Rust codebase by catching errors early in the development process. This can be especially important if your codebase requires the use of unsafe blocks of Rust code which may prevent the Rust compiler from catching bugs that you would normally expect it to.</p>
+		
+			<a href="/posts/improving-rust-codebase-quality-with-miri-in-ci/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h2>
+            
+            
+            
+            <a href="/posts/merge-queues/">
                 Merge Queues with Bors
             </a>
         </h2>
@@ -76,7 +108,7 @@ part of their workflows. This post explores several reasons for using a merge
 queue and describes how to set up Bors, the merge queue implementation used by
 the Rust language project.</p>
 		
-			<a href="https://kflansburg.com/posts/merge-queues/">Read more...</a>
+			<a href="/posts/merge-queues/">Read more...</a>
 		
 	</div>
 </article>
@@ -87,7 +119,7 @@ the Rust language project.</p>
             
             
             
-            <a href="https://kflansburg.com/posts/rust-cachepot/">
+            <a href="/posts/rust-cachepot/">
                 Speed up Rust Builds with Cachepot
             </a>
         </h2>
@@ -108,7 +140,7 @@ using a variety of cloud storage options. This creates a cache which can be
 shared amongst teams, used in ephemeral CI/CD environments, and even used for
 distributed builds.</p>
 		
-			<a href="https://kflansburg.com/posts/rust-cachepot/">Read more...</a>
+			<a href="/posts/rust-cachepot/">Read more...</a>
 		
 	</div>
 </article>
@@ -119,7 +151,7 @@ distributed builds.</p>
             
             
             
-            <a href="https://kflansburg.com/posts/introducing-krator/">
+            <a href="/posts/introducing-krator/">
                 Krator: My God, it&#39;s Full of States!
             </a>
         </h2>
@@ -144,7 +176,7 @@ distributed builds.</p>
             
             
             
-            <a href="https://kflansburg.com/posts/rust-continuous-delivery/">
+            <a href="/posts/rust-continuous-delivery/">
                 Rust Continuous Delivery
             </a>
         </h2>
@@ -168,7 +200,7 @@ a number of factors including cost, complexity, ergonomics, and rigor. In this
 post I will describe several of these iterations, lessons learned, and share my
 most recent solution in detail.</p>
 		
-			<a href="https://kflansburg.com/posts/rust-continuous-delivery/">Read more...</a>
+			<a href="/posts/rust-continuous-delivery/">Read more...</a>
 		
 	</div>
 </article>
@@ -179,7 +211,7 @@ most recent solution in detail.</p>
             
             
             
-            <a href="https://kflansburg.com/posts/a-fistful-of-states/">
+            <a href="/posts/a-fistful-of-states/">
                 A Fistful of States: More State Machine Patterns in Rust
             </a>
         </h2>
@@ -208,7 +240,7 @@ most recent solution in detail.</p>
 	</main>
 
 	<footer>
-	<p>&copy; 2024 <a href="https://kflansburg.com/"><b>Kevin Flansburg</b></a> |
+	<p>&copy; 2024 <a href="/"><b>Kevin Flansburg</b></a> |
 	<a href="https://github.com/kflansburg"><b>GitHub</b></a> |
 	<a href="https://twitter.com/kevin_flansburg"><b>Twitter</b></a> |
 	<a href="https://www.linkedin.com/in/kflansburg/"><b>LinkedIn</b></a> |

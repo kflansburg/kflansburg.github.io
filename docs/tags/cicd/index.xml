@@ -2,40 +2,26 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CICD on kflansburg.com</title>
-    <link>https://kflansburg.com/tags/cicd/</link>
+    <link>/tags/cicd/</link>
     <description>Recent content in CICD on kflansburg.com</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Mon, 27 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/cicd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 27 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/cicd/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Speed up Rust Builds with Cachepot</title>
-      <link>https://kflansburg.com/posts/rust-cachepot/</link>
+      <link>/posts/rust-cachepot/</link>
       <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/rust-cachepot/</guid>
-      <description>&lt;p&gt;One of the most effective ways for speeding up Rust builds is to cache the
-compiled artifacts of crate dependencies. Cargo does this automatically for
-local builds, but this quickly breaks down for distributed scenarios.&lt;/p&gt;
-&lt;p&gt;In this post, I will share my experiences with configuring and using Cachepot,
-a tool which wraps the Rust compiler and automatically caches build artifacts
-using a variety of cloud storage options. This creates a cache which can be
-shared amongst teams, used in ephemeral CI/CD environments, and even used for
-distributed builds.&lt;/p&gt;</description>
+      <guid>/posts/rust-cachepot/</guid>
+      <description>&lt;p&gt;One of the most effective ways for speeding up Rust builds is to cache the&#xA;compiled artifacts of crate dependencies. Cargo does this automatically for&#xA;local builds, but this quickly breaks down for distributed scenarios.&lt;/p&gt;&#xA;&lt;p&gt;In this post, I will share my experiences with configuring and using Cachepot,&#xA;a tool which wraps the Rust compiler and automatically caches build artifacts&#xA;using a variety of cloud storage options. This creates a cache which can be&#xA;shared amongst teams, used in ephemeral CI/CD environments, and even used for&#xA;distributed builds.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Rust Continuous Delivery</title>
-      <link>https://kflansburg.com/posts/rust-continuous-delivery/</link>
+      <link>/posts/rust-continuous-delivery/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/rust-continuous-delivery/</guid>
-      <description>&lt;p&gt;Over the last few years I have iterated several times on continuous delivery
-pipelines for Rust applications. Designing these pipelines involves balancing
-a number of factors including cost, complexity, ergonomics, and rigor. In this
-post I will describe several of these iterations, lessons learned, and share my
-most recent solution in detail.&lt;/p&gt;</description>
+      <guid>/posts/rust-continuous-delivery/</guid>
+      <description>&lt;p&gt;Over the last few years I have iterated several times on continuous delivery&#xA;pipelines for Rust applications. Designing these pipelines involves balancing&#xA;a number of factors including cost, complexity, ergonomics, and rigor. In this&#xA;post I will describe several of these iterations, lessons learned, and share my&#xA;most recent solution in detail.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

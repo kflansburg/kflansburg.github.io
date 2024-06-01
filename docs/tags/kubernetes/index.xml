@@ -2,42 +2,33 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kubernetes on kflansburg.com</title>
-    <link>https://kflansburg.com/tags/kubernetes/</link>
+    <link>/tags/kubernetes/</link>
     <description>Recent content in Kubernetes on kflansburg.com</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Kevin Flansburg</copyright>
-    <lastBuildDate>Mon, 15 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://kflansburg.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Feb 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Krator: My God, it&#39;s Full of States!</title>
-      <link>https://kflansburg.com/posts/introducing-krator/</link>
+      <link>/posts/introducing-krator/</link>
       <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/introducing-krator/</guid>
+      <guid>/posts/introducing-krator/</guid>
       <description>At the beginning of February, I published my second guest post on Deis Labs&amp;rsquo; blog, which introduced Krator. Pronounced &amp;ldquo;crater&amp;rdquo;, this crate allows you to build Kubernetes Operators in Rust, using the state machine API that we designed for Krustlet last year. Check out the post for an example of writing an Operator with this crate!</description>
     </item>
-    
     <item>
       <title>Rust Continuous Delivery</title>
-      <link>https://kflansburg.com/posts/rust-continuous-delivery/</link>
+      <link>/posts/rust-continuous-delivery/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/rust-continuous-delivery/</guid>
-      <description>&lt;p&gt;Over the last few years I have iterated several times on continuous delivery
-pipelines for Rust applications. Designing these pipelines involves balancing
-a number of factors including cost, complexity, ergonomics, and rigor. In this
-post I will describe several of these iterations, lessons learned, and share my
-most recent solution in detail.&lt;/p&gt;</description>
+      <guid>/posts/rust-continuous-delivery/</guid>
+      <description>&lt;p&gt;Over the last few years I have iterated several times on continuous delivery&#xA;pipelines for Rust applications. Designing these pipelines involves balancing&#xA;a number of factors including cost, complexity, ergonomics, and rigor. In this&#xA;post I will describe several of these iterations, lessons learned, and share my&#xA;most recent solution in detail.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>A Fistful of States: More State Machine Patterns in Rust</title>
-      <link>https://kflansburg.com/posts/a-fistful-of-states/</link>
+      <link>/posts/a-fistful-of-states/</link>
       <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://kflansburg.com/posts/a-fistful-of-states/</guid>
+      <guid>/posts/a-fistful-of-states/</guid>
       <description>My recent guest post on Deis Labs&amp;rsquo; blog offers a deep dive into my work on Krustlet, including the design and implementation of a flexible state machine API for specifying custom Kubelet behavior in a type-safe framework.</description>
     </item>
-    
   </channel>
 </rss>

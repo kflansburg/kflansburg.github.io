@@ -10,10 +10,6 @@ tags:
   - GitHub Actions
 ---
 
-# Detecting Undefined Behavior in Rust with Miri in GitHub Actions
-
-## Introduction to Miri
-
 Miri is an interpreter for Rust's mid-level intermediate representation (MIR), which allows for the detection of undefined behavior and other errors at compile time. Integrating Miri into Continuous Integration (CI) workflows can significantly improve the quality of a Rust codebase by catching errors early in the development process. This can be especially important if your codebase requires the use of unsafe blocks of Rust code which may prevent the Rust compiler from catching bugs that you would normally expect it to.
 
 <!--more-->
