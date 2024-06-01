@@ -18,6 +18,10 @@ Miri is an interpreter for Rust's mid-level intermediate representation (MIR), w
 
 <!--more-->
 
+### Warning
+
+This post was drafted by [GitHub Copilot Workspaces](https://githubnext.com/projects/copilot-workspace) to experiment with its capabilities.   I have reviewed it closely, but am not a Miri expert. In particular, the code examples for various bug types involve subtle use of Rust syntax and may not be entirely accurate.
+
 ## Types of Errors Detected by Miri
 
 You can find an extensive list of the kinds of errors that Miri can catch in [miri's test suite](https://github.com/rust-lang/miri/tree/master/tests). Note that many of these examples do not compile, and are used only to explain the bug.
