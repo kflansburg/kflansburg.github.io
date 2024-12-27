@@ -336,7 +336,7 @@ We also saw some interesting fish including Tuna and this curious Wahoo during o
   ></iframe>
 </div>
 
-## Diving Day 4: Sen Benedicto (El Boiler)
+## Diving Day 4: San Benedicto (El Boiler)
 
 Our final day of diving was back at San Benedicto at the famous El Boiler (The Boiler) site. The Boiler is
 an underwater seamount that rises up from a floor of about 130 ft to within 15 ft of the surface where it forms
