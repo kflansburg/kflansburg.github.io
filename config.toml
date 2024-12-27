@@ -45,6 +45,9 @@ publishDir = "docs"
         url = "https://www.linkedin.com/in/kflansburg/"
         weight = 3 
 
+[markup.goldmark.renderer]
+unsafe= true
+
 [markup]
   [markup.highlight]
     anchorLineNos = true
